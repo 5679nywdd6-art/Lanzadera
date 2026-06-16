@@ -1,1 +1,34 @@
+# macOS
 .DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# Carpetas de sistema
+__MACOSX/
+
+# Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Archivos temporales y de log
+*.log
+*.tmp
+*.temp
+
+# Variables de entorno
+.env
+.env.local
+.env.*
