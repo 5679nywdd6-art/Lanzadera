@@ -2,7 +2,7 @@
 // Service Worker
 // Guías TIC IES Primero de Mayo
 
-const CACHE_VERSION = '2026.06.16:02';
+const CACHE_VERSION = '2026.06.16:03';
 
 const ARCHIVOS_CACHE = [
   './',
