@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cómo acceder al correo corporativo @gobiernodecanarias.org</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+
+  :root {
+    --azul:       #1a2e5a;
+    --azul-medio: #2c4a8a;
+    --acento:     #e8360d;
+    --verde:      #1e7a5a;
+    --gris-claro: #f4f5f7;
+    --gris-borde: #d8dce6;
+    --texto:      #1c1f2e;
+    --blanco:     #ffffff;
+    --fondo:      #e3e6ec;
+    --fondo-tarjeta: #ffffff;
+    --texto-sec:  #444444;
+    --placeholder-bg: #fafbfd;
+    --placeholder-fg: #7d8696;
+    --sombra:     rgba(0,0,0,0.06);
+  }
+
+  html[data-theme="dark"] {
+    --azul:       #2c4a8a;
+    --azul-medio: #5b85d6;
+    --acento:     #ff7a52;
+    --verde:      #3ea882;
+    --gris-claro: #2a2f3d;
+    --gris-borde: #3a4254;
+    --texto:      #e6e9f0;
+    --fondo:      #11151f;
+    --fondo-tarjeta: #1c2230;
+    --texto-sec:  #b8c0d0;
+    --placeholder-bg: #232938;
+    --placeholder-fg: #9aa4b8;
+    --sombra:     rgba(0,0,0,0.35);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { color-scheme: light dark; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--fondo);
+    color: var(--texto);
+    font-size: 15px;
+    line-height: 1.65;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  /* ── ACCESIBILIDAD: saltar al contenido ── */
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    background: var(--azul);
+    color: var(--blanco);
+    padding: 10px 18px;
+    border-radius: 0 0 6px 0;
+    font-size: 13px;
+    font-weight: 600;
+    z-index: 1000;
+    text-decoration: none;
+  }
+  .skip-link:focus {
+    left: 0;
+  }
+
+  /* ── INTERRUPTOR DE TEMA ── */
+  .theme-toggle-wrap {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 900;
+  }
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--fondo-tarjeta);
+    border: 1px solid var(--gris-borde);
+    border-radius: 24px;
+    padding: 6px 14px 6px 10px;
+    cursor: pointer;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--texto);
+    box-shadow: 0 2px 8px var(--sombra);
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+  .theme-toggle:hover { border-color: var(--azul-medio); }
+  .theme-toggle:focus-visible {
+    outline: 2px solid var(--azul-medio);
+    outline-offset: 2px;
+  }
+  .theme-toggle .icon-sun, .theme-toggle .icon-moon {
+    width: 15px; height: 15px;
+    flex-shrink: 0;
+  }
+  html[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+  html:not([data-theme="dark"]) .theme-toggle .icon-moon { display: none; }
+
+  @media (max-width: 900px) {
+    .theme-toggle-wrap { top: 10px; right: 10px; }
+    .theme-toggle span.toggle-label { display: none; }
+    .theme-toggle { padding: 8px; border-radius: 50%; }
+  }
+
+  /* ── AJUSTES GENERALES MODO OSCURO ── */
+  html[data-theme="dark"] li em { color: var(--texto-sec); }
+  html[data-theme="dark"] .img-placeholder { background: var(--placeholder-bg); border-color: var(--gris-borde); color: var(--placeholder-fg); }
+  html[data-theme="dark"] .img-placeholder .ph-text { color: var(--placeholder-fg); }
+  html[data-theme="dark"] .img-placeholder .ph-sub { color: var(--texto-sec); }
+  html[data-theme="dark"] .tabla-redes th { background: var(--gris-claro); color: var(--texto); }
+  html[data-theme="dark"] .tabla-redes td { color: var(--texto-sec); }
+  html[data-theme="dark"] .tabla-redes tr:nth-child(even) td { background: var(--placeholder-bg); }
+  html[data-theme="dark"] .tabla-redes th, html[data-theme="dark"] .tabla-redes td { border-color: var(--gris-borde); }
+  html[data-theme="dark"] ol.referencias li { color: var(--texto-sec); }
+
+  /* Bloques de color pastel (avisos, recursos, cabeceras de sección, chips):
+     se atenúa su luminosidad para que no deslumbren sobre fondo oscuro,
+     conservando el código de color por sección. */
+  html[data-theme="dark"] .aviso,
+  html[data-theme="dark"] .aviso-editar,
+  html[data-theme="dark"] .recurso,
+  html[data-theme="dark"] .s-paso1 .sec-header,
+  html[data-theme="dark"] .s-paso2 .sec-header,
+  html[data-theme="dark"] .s-paso3 .sec-header,
+  html[data-theme="dark"] .s-no .sec-header,
+  html[data-theme="dark"] .chip,
+  html[data-theme="dark"] .firma-ejemplo,
+  html[data-theme="dark"] .campos-correo .etiqueta,
+  html[data-theme="dark"] .editable {
+    filter: brightness(0.6) saturate(0.85);
+  }
+  html[data-theme="dark"] .firma-ejemplo,
+  html[data-theme="dark"] .campos-correo {
+    border-color: var(--gris-borde);
+  }
+  html[data-theme="dark"] .campos-correo .valor { color: var(--texto-sec); }
+  html[data-theme="dark"] section .sec-header[style*="f5f7fb"] {
+    background: var(--gris-claro) !important;
+  }
+  html[data-theme="dark"] section .sec-header[style*="f5f7fb"] h2 {
+    color: var(--azul-medio) !important;
+  }
+  html[data-theme="dark"] section .sec-header[style*="f5f7fb"] .ico {
+    background: var(--placeholder-bg) !important;
+    color: var(--azul-medio) !important;
+  }
+
+  /* ── TUTORIALES RELACIONADOS (dentro de .sec-body) ── */
+  .relacionados-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .relacionado-card {
+    background: var(--gris-claro);
+    border-radius: 8px;
+    padding: 16px 18px;
+    text-decoration: none;
+    color: var(--texto);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border: 1px solid var(--gris-borde);
+    transition: border-color 0.15s ease, transform 0.15s ease, background 0.2s ease;
+  }
+  .relacionado-card:hover {
+    border-color: var(--azul-medio);
+    transform: translateY(-2px);
+  }
+  .relacionado-card:focus-visible {
+    outline: 2px solid var(--azul-medio);
+    outline-offset: 2px;
+  }
+  .relacionado-card .icono {
+    width: 32px; height: 32px;
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    background: #eef4ff;
+    color: var(--azul-medio);
+    margin-bottom: 2px;
+  }
+  html[data-theme="dark"] .relacionado-card .icono { filter: brightness(0.6) saturate(0.85); }
+  .relacionado-card h3 {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--azul);
+    line-height: 1.35;
+  }
+  .relacionado-card p {
+    font-size: 12px;
+    color: var(--texto-sec);
+    line-height: 1.5;
+  }
+  .relacionado-card .ir {
+    margin-top: 4px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--azul-medio);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .relacionado-card .ir svg { width: 11px; height: 11px; transition: transform 0.15s ease; }
+  .relacionado-card:hover .ir svg { transform: translateX(3px); }
+
+  /* ── VOLVER A LA LANZADERA ── */
+  .volver-lanzadera {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--gris-borde);
+    display: flex;
+    justify-content: center;
+  }
+  .volver-lanzadera a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--azul-medio);
+    text-decoration: none;
+    padding: 8px 18px;
+    border: 1px solid var(--gris-borde);
+    border-radius: 20px;
+    background: var(--fondo-tarjeta);
+    transition: border-color 0.15s ease, transform 0.15s ease, background 0.2s ease;
+  }
+  .volver-lanzadera a:hover {
+    border-color: var(--azul-medio);
+    transform: translateX(-3px);
+  }
+  .volver-lanzadera a:focus-visible {
+    outline: 2px solid var(--azul-medio);
+    outline-offset: 2px;
+  }
+  .volver-lanzadera svg { width: 12px; height: 12px; transition: transform 0.15s ease; }
+  .volver-lanzadera a:hover svg { transform: translateX(-3px); }
+
+  @media (max-width: 900px) {
+    .relacionados-grid { grid-template-columns: 1fr; }
+  }
+
+  @media print {
+    .seccion-relacionados, .theme-toggle-wrap, .skip-link { display: none !important; }
+    /* Media toggle: mostrar siempre la imagen estática, nunca el GIF */
+    .media-gif, .media-hint { display: none !important; }
+    .media-toggle.media-cargado { position: static; }
+    .media-static { position: static !important; width: 100%; height: auto; }
+  }
+
+  /* ── CABECERA ── */
+  header {
+    background: var(--azul);
+    color: var(--blanco);
+    margin: 24px 60px 0;
+    padding: 52px 32px 44px;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    right: -60px; top: -60px;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  header .label {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 14px;
+  }
+  header h1 {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1.15;
+  }
+  header h1 span { color: #7eb8ff; }
+  header .subtitulo {
+    margin-top: 14px;
+    font-size: 14px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.65);
+  }
+  header .badges {
+    margin-top: 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  header .fuente-badge {
+    display: block;
+    background: rgba(255,255,255,0.09);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 4px;
+    padding: 8px 14px;
+    font-size: 11.5px;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.6);
+  }
+  header .fuente-badge span { color: rgba(255,255,255,0.9); font-weight: 500; }
+
+  /* ── INTRO ── */
+  .intro {
+    background: var(--azul-medio);
+    margin: 36px 60px 0;
+    padding: 20px 28px;
+    border-radius: 6px;
+    font-size: 15px;
+    color: var(--blanco);
+    font-weight: 700;
+  }
+
+  /* ── AVISO OBLIGATORIEDAD ── */
+  .aviso {
+    background: #fff2f0;
+    border: 1px solid #ffc8c0;
+    border-left: 5px solid var(--acento);
+    border-radius: 0 6px 6px 0;
+    margin: 36px 60px 0;
+    padding: 16px 20px 16px 15px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #b52200;
+  }
+  .aviso strong { color: #8a1900; }
+
+  /* ── CONTENIDO PRINCIPAL ── */
+  main {
+    padding: 36px 60px 60px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+  }
+
+  /* ── SECCIÓN GENÉRICA ── */
+  section {
+    background: var(--fondo-tarjeta);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px var(--sombra);
+  }
+  .full { grid-column: 1 / -1; }
+
+  .sec-header {
+    padding: 18px 24px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .sec-header .ico {
+    width: 34px; height: 34px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px;
+    font-weight: 800;
+    font-family: 'IBM Plex Sans', sans-serif;
+    flex-shrink: 0;
+  }
+  .sec-header h2 {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .sec-body { padding: 4px 24px 22px; }
+
+  /* colores por sección (mismo patrón cromático que la guía del coordinador TIC) */
+  .s-paso1 .sec-header { background: #eef4ff; border-bottom: 2px solid #c5d8ff; }
+  .s-paso1 .sec-header .ico { background: #d0e2ff; color: var(--azul-medio); }
+  .s-paso1 .sec-header h2 { color: var(--azul); }
+
+  .s-paso2 .sec-header { background: #effaf4; border-bottom: 2px solid #b4e6cc; }
+  .s-paso2 .sec-header .ico { background: #c8f0da; color: var(--verde); }
+  .s-paso2 .sec-header h2 { color: #155940; }
+
+  .s-paso3 .sec-header { background: #fdf6e8; border-bottom: 2px solid #f0d98a; }
+  .s-paso3 .sec-header .ico { background: #faecc0; color: #8a6200; }
+  .s-paso3 .sec-header h2 { color: #6a4900; }
+
+  .s-no   .sec-header { background: #fff2f0; border-bottom: 2px solid #ffc8c0; }
+  .s-no   .sec-header .ico { background: #ffdbd6; color: var(--acento); }
+  .s-no   .sec-header h2 { color: #b52200; }
+
+  /* ── LISTAS ── */
+  ul.check, ul.dot, ul.num {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  ul.check li, ul.dot li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  ul.check li::before { content: '✓'; color: var(--azul-medio); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  ul.dot   li::before { content: '◆'; color: var(--verde); font-size: 9px; flex-shrink: 0; margin-top: 4px; }
+
+  ul.num {
+    counter-reset: pasonum;
+  }
+  ul.num li {
+    font-size: 13.5px;
+    line-height: 1.55;
+    counter-increment: pasonum;
+    overflow: hidden;
+  }
+  ul.num li .img-placeholder, ul.num li .chip-link, ul.num li .chip-wrap-center { clear: both; }
+  ul.num li::before {
+    content: counter(pasonum);
+    float: left;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--azul-medio);
+    color: var(--blanco);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+    margin-right: 12px;
+    margin-top: 1px;
+  }
+  .s-paso2 ul.num li::before { background: var(--verde); }
+  .s-paso3 ul.num li::before { background: #c08600; }
+
+  /* ── VARIANTE: número flotante, texto en párrafo continuo ── */
+  ul.num-flow {
+    list-style: none;
+    counter-reset: pasonum;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  ul.num-flow li {
+    font-size: 13.5px;
+    line-height: 1.6;
+    counter-increment: pasonum;
+    overflow: hidden;
+  }
+  ul.num-flow li::before {
+    content: counter(pasonum);
+    float: left;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--azul-medio);
+    color: var(--blanco);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+    margin-right: 12px;
+    margin-top: 1px;
+  }
+  .s-paso2 ul.num-flow li::before { background: var(--verde); }
+  .s-paso3 ul.num-flow li::before { background: #c08600; }
+
+  li strong { font-weight: 500; color: var(--texto); }
+  li em     { font-style: italic; color: var(--texto-sec); font-size: 12.5px; }
+
+  /* ── BLOQUE ENLACE / RECURSO ── */
+  .recurso {
+    background: #f0f5ff;
+    border: 1px solid #c5d8ff;
+    border-left: 4px solid var(--azul-medio);
+    border-radius: 0 6px 6px 0;
+    padding: 14px 18px;
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--azul);
+  }
+  .recurso strong { color: var(--azul); }
+  .recurso a {
+    color: var(--azul-medio);
+    text-decoration: none;
+    font-weight: 500;
+    word-break: break-all;
+  }
+  .recurso a:hover { text-decoration: underline; }
+
+  .s-paso2 .recurso { background: #effaf4; border: 1px solid #b4e6cc; border-left: 4px solid var(--verde); color: #155940; }
+  .s-paso2 .recurso a { color: var(--verde); }
+  .s-paso3 .recurso { background: #fdf6e8; border: 1px solid #f0d98a; border-left: 4px solid #c08600; color: #6a4900; }
+  .s-paso3 .recurso a { color: #8a6200; }
+
+  /* ── PLACEHOLDER DE CAPTURA ── */
+  .img-placeholder {
+    margin-top: 10px;
+    border: 2px dashed var(--gris-borde);
+    border-radius: 6px;
+    background: var(--placeholder-bg);
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: #98a2b3;
+    text-align: center;
+    padding: 20px;
+    clear: both;
+  }
+  .img-placeholder .ph-icon { font-size: 24px; }
+  .img-placeholder .ph-text {
+    font-size: 12px;
+    font-weight: 500;
+    color: #8a93a6;
+  }
+  .img-placeholder .ph-sub {
+    font-size: 10.5px;
+    color: #9099ad;
+  }
+
+  /* ── MEDIA TOGGLE: imagen estática que revela un GIF animado ── */
+  /* Cada .img-placeholder puede llevar data-img / data-gif / data-alt.
+     Si data-img no carga (archivo inexistente), se conserva el aspecto
+     punteado actual. Si carga, se sustituye por la imagen, y al pasar
+     el cursor (o al tocar en pantallas táctiles) se muestra el GIF. */
+  .media-toggle.media-cargado {
+    border-style: solid;
+    padding: 0;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    min-height: 0;
+  }
+  .media-toggle .media-static,
+  .media-toggle .media-gif {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .media-toggle .media-gif {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    background: var(--placeholder-bg);
+  }
+  .media-toggle.media-cargado:hover .media-gif,
+  .media-toggle.media-activo .media-gif {
+    opacity: 1;
+  }
+  .media-toggle .media-hint {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 4px 9px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+  }
+  .media-toggle.media-cargado:hover .media-hint,
+  .media-toggle.media-activo .media-hint {
+    opacity: 0;
+  }
+  .media-toggle .media-hint svg { width: 9px; height: 9px; }
+  /* En pantallas táctiles, mostrar siempre la pista de "tocar para reproducir" */
+  @media (hover: none) {
+    .media-toggle .media-hint { opacity: 1; }
+    .media-toggle.media-activo .media-hint { opacity: 0; }
+  }
+
+
+  /* ── CHIPS DE PLATAFORMA ── */
+  .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; padding-top: 4px; margin-bottom: 12px; }
+  .chip {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 12.5px;
+    font-weight: 500;
+    font-family: 'IBM Plex Sans', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .chip svg { width: 14px; height: 14px; flex-shrink: 0; }
+  .chip-ios { background: #d6eaff; color: #1a3d7a; }
+  .chip-and { background: #d6f0e4; color: #10503a; }
+  .chip-sirvete { background: #d6eaff; color: #1a3d7a; }
+  .chip-correo { background: #effaf4; color: #155940; }
+  .chip-link { margin-top: 10px; justify-content: center; width: 100%; text-decoration: none; display: flex; }
+  .chip-wrap-center { margin-top: 10px; text-align: center; }
+  .chip-wrap-center .chip { text-decoration: none; }
+
+  /* ── REFERENCIAS ── */
+  ol.referencias {
+    list-style: none;
+    counter-reset: refnum;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  ol.referencias li {
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: #444;
+    counter-increment: refnum;
+    overflow: hidden;
+  }
+  ol.referencias li::before {
+    content: counter(refnum) ".";
+    float: left;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 700;
+    color: var(--azul-medio);
+    min-width: 20px;
+    margin-right: 4px;
+  }
+  ol.referencias a {
+    color: var(--azul-medio);
+    text-decoration: none;
+    word-break: break-word;
+  }
+  ol.referencias a:hover { text-decoration: underline; }
+
+  /* ── FOOTER ── */
+  footer {
+    margin: 0 60px 48px;
+    padding: 16px 24px;
+    background: var(--azul);
+    border-radius: 6px;
+    color: rgba(255,255,255,0.55);
+    font-size: 11.5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  footer strong { color: rgba(255,255,255,0.85); }
+
+  @media print {
+    body { background: white; }
+    header, footer { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  @media (max-width: 900px) {
+    main { grid-template-columns: 1fr; }
+    header { margin: 24px 20px 0; padding-left: 20px; padding-right: 20px; border-radius: 6px; }
+    .intro { margin-left: 20px; margin-right: 20px; padding-left: 20px; padding-right: 20px; }
+    .aviso { margin-left: 20px; margin-right: 20px; }
+    main { margin-left: 0; margin-right: 0; padding-left: 20px; padding-right: 20px; }
+    footer { margin-left: 20px; margin-right: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<a href="#contenido" class="skip-link">Saltar al contenido</a>
+
+<div class="theme-toggle-wrap">
+  <button type="button" class="theme-toggle" id="themeToggle" aria-pressed="false" aria-label="Cambiar a modo oscuro">
+    <svg class="icon-sun" viewBox="0 0 512 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M256 96a32 32 0 0 0 32-32V32a32 32 0 0 0-64 0v32a32 32 0 0 0 32 32zm0 320a32 32 0 0 0-32 32v32a32 32 0 0 0 64 0v-32a32 32 0 0 0-32-32zm160-160a32 32 0 0 0 32-32h32a32 32 0 0 0 0-64h-32a32 32 0 0 0-32 32zm-320 0a32 32 0 0 0-32-32H32a32 32 0 0 0 0 64h32a32 32 0 0 0 32-32zm301.25-114.75 22.62-22.63a32 32 0 0 0-45.25-45.25l-22.62 22.63a32 32 0 0 0 45.25 45.25zM166.4 346.4l-22.63 22.62a32 32 0 0 0 45.26 45.25l22.62-22.62a32 32 0 0 0-45.25-45.25zm0-180.8a32 32 0 0 0 45.25-45.25l-22.62-22.62a32 32 0 0 0-45.26 45.25zm180.8 180.8a32 32 0 0 0-45.25 45.25l22.62 22.62a32 32 0 0 0 45.25-45.25zM256 128a128 128 0 1 0 128 128 128 128 0 0 0-128-128z"/></svg>
+    <svg class="icon-moon" viewBox="0 0 384 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M223.5 32C100 32 0 132 0 256s100 224 223.5 224c60.6 0 115.5-24.2 155.8-63.4 5.2-5 6.7-12.8 3.7-19.4s-9.9-10.4-17.1-9.5c-9.6 1.2-19.4 1.8-29.4 1.8-118.5 0-214.6-96.1-214.6-214.6 0-49.6 16.8-95.4 45-131.7 4.4-5.7 4.5-13.6.5-19.6S231.5 27.6 224 28c-.2 0-.5 0-.5 0z"/></svg>
+    <span class="toggle-label">Modo oscuro</span>
+  </button>
+</div>
+
+<!-- CABECERA -->
+<header>
+  <div class="label">Gobierno de Canarias · Consejería de Educación</div>
+  <h1>Cómo acceder al <span>correo corporativo</span><br>@gobiernodecanarias.org</h1>
+  <p class="subtitulo">Guía de resolución de incidencias de acceso al buzón corporativo del profesorado: activación, verificación con GobCan Verifica y acceso al correo.</p>
+  <div class="badges">
+    <div class="fuente-badge">📄 Recursos utilizados: <span>Sírvete (CAU_CE) · GobCan Verifica · Correo corporativo Gobierno de Canarias</span></div>
+    <div class="fuente-badge">👤 Elaborado por: <span><a href="https://www3.gobiernodecanarias.org/medusa/ecoblog/rtorjim/" target="_blank" style="color: inherit; text-decoration: underline;">Ramón S. Torrente Jiménez</a></span> · Coordinador TIC · <a href="https://www3.gobiernodecanarias.org/medusa/edublog/iesprimerodemayo/" target="_blank" style="color: inherit; text-decoration: underline;">IES Primero de Mayo</a> · Curso 2026-2027, con la colaboración de <span><a href="https://www3.gobiernodecanarias.org/medusa/ecoblog/lgodmar/" target="_blank" style="color: inherit; text-decoration: underline;">Lara Godoy Marrero</a></span></div>
+  </div>
+</header>
+
+<!-- AVISO OBLIGATORIEDAD -->
+<div class="aviso">
+  <strong>⚠️ Uso obligatorio del correo corporativo.</strong> Todo el profesorado debe utilizar exclusivamente la dirección de correo electrónico corporativa del dominio <strong>@gobiernodecanarias.org</strong>, ya que es la única dirección oficial proporcionada por el Gobierno de Canarias para las comunicaciones del personal docente.
+</div>
+
+<!-- INTRO -->
+<div class="intro">
+  Si tienes algún tipo de problema accediendo a tu correo corporativo, sigue estos tres pasos. El acceso al correo se realiza mediante <strong>usuario y contraseña, validados a través de la aplicación GobCan Verifica</strong> instalada en el móvil.
+</div>
+
+<!-- CONTENIDO PRINCIPAL -->
+<main id="contenido">
+
+  <!-- PASO 1 -->
+  <section class="s-paso1 full">
+    <div class="sec-header">
+      <div class="ico">1</div>
+      <h2>Primero: si no lo has hecho, solicita la activación de tu cuenta de correo e instala GobCan Verifica</h2>
+    </div>
+    <div class="sec-body">
+      <ul class="num-flow">
+        <li>
+          <strong>Solicita la activación de tu buzón de correo corporativo</strong> a través de <a href="https://www3.gobiernodecanarias.org/educacion/cau_ce/servicios/catalogo" target="_blank" style="color: var(--azul-medio); font-weight: 500; text-decoration: none;">Sírvete</a>, si aún no lo has hecho.
+          <div class="img-placeholder media-toggle"
+               data-img="img/correo-01.png"
+               data-gif="img/correo-01.gif"
+               data-alt="Solicita la activación de tu buzón de correo corporativo a través de Sírvete, si aún no lo has hecho">
+            <div class="ph-icon">🖼️</div>
+            <div class="ph-text">Captura de pantalla</div>
+            <div class="ph-sub">Sustituye este recuadro por tu imagen</div>
+          </div>
+          <div class="chip-wrap-center">
+            <a class="chip chip-sirvete" href="https://www3.gobiernodecanarias.org/educacion/cau_ce/servicios/catalogo" target="_blank">
+              <svg viewBox="0 0 512 512" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M256 0c4.6 0 9.2 1 13.4 2.9L457.7 82.8c22 9.3 38.4 31 38.3 57.2-.5 99.2-41.3 280.7-213.6 363.2-16.7 8-36.1 8-52.8 0C57.3 420.7 16.5 239.2 16 140c-.1-26.2 16.3-47.9 38.3-57.2L242.7 2.9C246.8 1 251.4 0 256 0zm0 66.8V444.8C394 378 431.1 230.1 432 141.4L256 66.8z"/></svg>
+              Plataforma Sírvete
+            </a>
+          </div>
+        </li>
+        <li>
+          <strong>Instala la app GobCan Verifica</strong> en tu móvil, si aún no la tienes. Está disponible para iOS y Android.
+          <div class="img-placeholder media-toggle"
+               data-img="img/correo-02.png"
+               data-gif="img/correo-02.gif"
+               data-alt="Instala la app GobCan Verifica en tu móvil, si aún no la tienes">
+            <div class="ph-icon">🖼️</div>
+            <div class="ph-text">Captura de pantalla</div>
+            <div class="ph-sub">Sustituye este recuadro por tu imagen</div>
+          </div>
+        </li>
+      </ul>
+      <div class="chips">
+        <a class="chip chip-ios" href="https://apps.apple.com/es/app/gobcan-verifica/id1663960794" target="_blank" style="text-decoration: none;">
+          <svg viewBox="0 0 384 512" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1-2 49.9-15.2 69.5-34.3z"/></svg>
+          Descargar para iOS
+        </a>
+        <a class="chip chip-and" href="https://play.google.com/store/apps/details?id=org.gobiernodecanarias.gobcanverifica&hl=es" target="_blank" style="text-decoration: none;">
+          <svg viewBox="0 0 576 512" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M420.55 301.93a24 24 0 1 1 24-24 24 24 0 0 1-24 24m-265.1 0a24 24 0 1 1 24-24 24 24 0 0 1-24 24m273.7-144.48 47.94-83a10 10 0 1 0-17.27-10h.01l-48.54 84.07a301.25 301.25 0 0 0-246.56 0L116.19 64.45a10 10 0 1 0-17.27 10l47.94 83C64.53 202.22 8.24 285.55 0 384h576c-8.24-98.45-64.54-181.78-146.85-226.55"/></svg>
+          Descargar para Android
+        </a>
+      </div>
+      <div class="recurso">
+        <strong>Sírvete (activación del buzón):</strong> portal de incidencias y solicitudes de la Consejería de Educación.<br>
+        <strong>GobCan Verifica:</strong> aplicación oficial del Gobierno de Canarias para verificación de identidad mediante notificación push, requerida para iniciar sesión en el correo corporativo.
+      </div>
+    </div>
+  </section>
+
+  <!-- PASOS 2 Y 3 -->
+  <div style="display: flex; flex-direction: column; gap: 28px; grid-column: 1 / -1;">
+  <section class="s-paso2">
+    <div class="sec-header">
+      <div class="ico">2</div>
+      <h2>Segundo: accede al portal de correo</h2>
+    </div>
+    <div class="sec-body">
+      <ul class="num">
+        <li>
+          Cuando tengas la cuenta de correo activada y la aplicación GobCan Verifica instalada en el móvil, ya podrás acceder al correo corporativo a través del portal de identificación de usuario del Gobierno de Canarias.
+          <div class="img-placeholder media-toggle"
+               data-img="img/correo-03.png"
+               data-gif="img/correo-03.gif"
+               data-alt="Cuando tengas la cuenta de correo activada y la aplicación GobCan Verifica instalada en el móvil, ya podrás acceder al">
+            <div class="ph-icon">🖼️</div>
+            <div class="ph-text">Captura de pantalla</div>
+            <div class="ph-sub">Sustituye este recuadro por tu imagen</div>
+          </div>
+          <div class="chip-wrap-center">
+            <a class="chip chip-correo" href="https://correo.gobiernodecanarias.org" target="_blank">
+              <svg viewBox="0 0 512 512" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4 0-26.5-21.5-48-48-48H48zM0 176V384c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V176L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z"/></svg>
+              Correo corporativo
+            </a>
+          </div>
+        </li>
+      </ul>
+      <div class="recurso">
+        <strong>Acceso al correo:</strong> <a href="https://correo.gobiernodecanarias.org" target="_blank">correo.gobiernodecanarias.org</a><br>
+        El acceso se realiza mediante usuario o NIF y contraseña.
+      </div>
+    </div>
+  </section>
+
+  <!-- PASO 3 -->
+  <section class="s-paso3">
+    <div class="sec-header">
+      <div class="ico">3</div>
+      <h2>Tercero: valida el acceso desde el móvil</h2>
+    </div>
+    <div class="sec-body">
+      <ul class="num">
+        <li>
+          Introduce tu nombre de usuario y contraseña para acceder al correo.
+          <div class="img-placeholder media-toggle"
+               data-img="img/correo-04.png"
+               data-gif="img/correo-04.gif"
+               data-alt="Introduce tu nombre de usuario y contraseña para acceder al correo">
+            <div class="ph-icon">🖼️</div>
+            <div class="ph-text">Captura de pantalla</div>
+            <div class="ph-sub">Sustituye este recuadro por tu imagen</div>
+          </div>
+        </li>
+        <li>
+          Valida la solicitud de ingreso accediendo desde tu móvil a la aplicación GobCan Verifica.
+          <div class="img-placeholder media-toggle"
+               data-img="img/correo-05.png"
+               data-gif="img/correo-05.gif"
+               data-alt="Valida la solicitud de ingreso accediendo desde tu móvil a la aplicación GobCan Verifica">
+            <div class="ph-icon">🖼️</div>
+            <div class="ph-text">Captura de pantalla</div>
+            <div class="ph-sub">Sustituye este recuadro por tu imagen</div>
+          </div>
+        </li>
+        <li>
+          Una vez validada la solicitud desde el móvil, debería abrirse tu cuenta de correo.
+          <div class="img-placeholder media-toggle"
+               data-img="img/correo-06.png"
+               data-gif="img/correo-06.gif"
+               data-alt="Una vez validada la solicitud desde el móvil, debería abrirse tu cuenta de correo">
+            <div class="ph-icon">🖼️</div>
+            <div class="ph-text">Captura de pantalla</div>
+            <div class="ph-sub">Sustituye este recuadro por tu imagen</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+  </div>
+
+  <!-- SI SIGUES TENIENDO PROBLEMAS -->
+  <section class="s-no full">
+    <div class="sec-header">
+      <div class="ico">!</div>
+      <h2>Si sigues teniendo problemas</h2>
+    </div>
+    <div class="sec-body">
+      <p style="font-size: 13.5px; line-height: 1.6; margin-bottom: 10px;">Si después de seguir estos pasos sigues sin poder acceder, <strong>puedes abrir una incidencia en Sírvete</strong> a través del enlace correspondiente, indicando el problema concreto encontrado (activación pendiente, fallo de verificación, bloqueo de cuenta, etc.).</p>
+      <p style="font-size: 13.5px; line-height: 1.6;">Recuerda que el coordinador/a TIC del centro <strong>no gestiona contraseñas ni cuentas personales del profesorado</strong>; cada docente es responsable de sus credenciales y debe canalizar cualquier incidencia técnica a través de Sírvete (CAU_CE).</p>
+    </div>
+  </section>
+
+  <!-- AVISO RGPD -->
+  <div class="aviso full" style="margin: 0;">
+    <strong>🔒 Protección de datos.</strong> El uso de la cuenta de correo corporativa <strong>@gobiernodecanarias.org</strong> es la única vía que garantiza el cumplimiento del RGPD en las comunicaciones del profesorado con el alumnado, las familias y la Administración educativa.
+  </div>
+
+  <!-- REFERENCIAS -->
+  <section class="full">
+    <div class="sec-header" style="background:#f5f7fb; border-bottom: 2px solid var(--gris-borde);">
+      <div class="ico" style="background:#e0e8ff; color: var(--azul-medio);">§</div>
+      <h2 style="color: var(--azul);">Referencias</h2>
+    </div>
+    <div class="sec-body">
+      <ol class="referencias">
+        <li>Reglamento General de Protección de Datos (RGPD) — Reglamento (UE) 2016/679.</li>
+        <li>Ley Orgánica 3/2018, de 5 de diciembre, de Protección de Datos Personales y garantía de los derechos digitales (LOPDGDD).</li>
+        <li>ORDEN de 21 de mayo de 2019, por la que se aprueba la política de seguridad de la información de esta Consejería en el ámbito de la administración electrónica.</li>
+        <li>Guía de buenas prácticas en el uso del Suite Educativo de la Consejería de Educación. Área de Tecnología Educativa. Consejería de Educación, Formación Profesional, Actividades Físicas y Deportes.</li>
+        <li>Muñoz Abogados / Edulaw. «Protección de datos y menores de edad: ¿por qué no son datos especialmente protegidos?» Disponible en: <a href="https://munozabogadoseducacion.es/proteccion-de-datos-y-menores-de-edad-por-que-no-son-datos-especialmente-protegidos" target="_blank">munozabogadoseducacion.es</a></li>
+        <li>Resolución de la Dirección General de Centros, Infraestructura y Promoción Educativa, por la que se regula el funcionamiento de la red de comunicaciones de la Consejería de Educación (red Medusa) y los servicios asociados, incluido el correo corporativo.</li>
+        <li>Portal Sírvete — Consejería de Educación, Formación Profesional, Actividades Físicas y Deportes del Gobierno de Canarias: gestión de incidencias técnicas (CAU_CE).</li>
+        <li>GobCan Verifica — Gobierno de Canarias: aplicación oficial de verificación de identidad para el acceso a servicios corporativos.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- TUTORIALES RELACIONADOS -->
+  <section class="full seccion-relacionados">
+    <div class="sec-header" style="background:#f5f7fb; border-bottom: 2px solid var(--gris-borde);">
+      <div class="ico" style="background:#e0e8ff; color: var(--azul-medio);">⇄</div>
+      <h2 style="color: var(--azul);">Tutoriales relacionados</h2>
+    </div>
+    <div class="sec-body">
+      <div class="relacionados-grid">
+
+        <a class="relacionado-card" href="guia_gobcan_verifica_dispositivo.html">
+          <div class="icono">📱</div>
+          <h3>Configurar GobCan Verifica en un nuevo dispositivo</h3>
+          <p>Migra la verificación en dos pasos a un nuevo móvil.</p>
+          <div class="ir">Ver guía <svg viewBox="0 0 448 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.7 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></svg></div>
+        </a>
+
+        <a class="relacionado-card" href="guia_correo_avanzado.html">
+          <div class="icono">📧</div>
+          <h3>Uso avanzado del correo corporativo</h3>
+          <p>Campos CC y CCO, y personalización de tu firma de correo.</p>
+          <div class="ir">Ver guía <svg viewBox="0 0 448 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.7 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></svg></div>
+        </a>
+
+        <a class="relacionado-card" href="guia_miclave.html">
+          <div class="icono">🔑</div>
+          <h3>Recuperar o cambiar la contraseña corporativa (MiClave)</h3>
+          <p>Restaura el acceso a tu cuenta en caso de bloqueo o caducidad.</p>
+          <div class="ir">Ver guía <svg viewBox="0 0 448 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.7 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></svg></div>
+        </a>
+
+      </div>
+
+      <div class="volver-lanzadera">
+        <a href="lanzadera_tutoriales.html">
+          <svg viewBox="0 0 448 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg>
+          Volver a la lanzadera de tutoriales
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div>Guía elaborada a partir de material gráfico original de <strong><a href="https://www3.gobiernodecanarias.org/medusa/ecoblog/lgodmar/" target="_blank" style="color: inherit; text-decoration: underline;">Lara Godoy Marrero</a> y <a href="https://www3.gobiernodecanarias.org/medusa/ecoblog/rtorjim/" target="_blank" style="color: inherit; text-decoration: underline;">Ramón S. Torrente Jiménez</a></strong> (CC BY-NC-SA) · Acceso al correo corporativo @gobiernodecanarias.org</div>
+  <div>Curso 2026–2027</div>
+</footer>
+
+<script>
+  (function () {
+    var html = document.documentElement;
+    var btn = document.getElementById('themeToggle');
+    var STORAGE_KEY = 'tic-tema';
+
+    function aplicarTema(tema) {
+      if (tema === 'dark') {
+        html.setAttribute('data-theme', 'dark');
+        btn.setAttribute('aria-pressed', 'true');
+        btn.setAttribute('aria-label', 'Cambiar a modo claro');
+      } else {
+        html.removeAttribute('data-theme');
+        btn.setAttribute('aria-pressed', 'false');
+        btn.setAttribute('aria-label', 'Cambiar a modo oscuro');
+      }
+    }
+
+    var guardado = localStorage.getItem(STORAGE_KEY);
+    if (guardado) {
+      aplicarTema(guardado);
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      aplicarTema('dark');
+    }
+
+    btn.addEventListener('click', function () {
+      var actual = html.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      var nuevo = actual === 'dark' ? 'light' : 'dark';
+      aplicarTema(nuevo);
+      localStorage.setItem(STORAGE_KEY, nuevo);
+    });
+  })();
+</script>
+
+<script>
+  // ── MEDIA TOGGLE: sustituye el placeholder punteado por una imagen real
+  // (y revela un GIF animado al pasar el cursor o al tocar en pantallas táctiles)
+  // cuando existen los archivos indicados en data-img / data-gif.
+  // Si data-img no existe (404), el placeholder punteado se mantiene sin cambios.
+  (function () {
+    var contenedores = document.querySelectorAll('.media-toggle[data-img]');
+
+    contenedores.forEach(function (el) {
+      var srcImg = el.getAttribute('data-img');
+      var srcGif = el.getAttribute('data-gif');
+
+      var test = new Image();
+      test.onload = function () {
+        // La imagen estática existe: construir el componente.
+        var fallbackHTML = el.innerHTML;
+        el.innerHTML = '';
+        el.classList.add('media-cargado');
+
+        var imgEstatica = document.createElement('img');
+        imgEstatica.className = 'media-static';
+        imgEstatica.src = srcImg;
+        imgEstatica.alt = el.getAttribute('data-alt') || 'Captura de pantalla del paso';
+        el.appendChild(imgEstatica);
+
+        if (srcGif) {
+          var imgGif = document.createElement('img');
+          imgGif.className = 'media-gif';
+          imgGif.alt = '';
+          imgGif.setAttribute('aria-hidden', 'true');
+          imgGif.loading = 'lazy';
+          el.appendChild(imgGif);
+
+          var hint = document.createElement('span');
+          hint.className = 'media-hint';
+          hint.innerHTML = '<svg viewBox="0 0 384 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.3-23-41L73 39z"/></svg>Toca para reproducir';
+          el.appendChild(hint);
+
+          var gifCargado = false;
+          function activarGif() {
+            if (!gifCargado) {
+              imgGif.src = srcGif;
+              gifCargado = true;
+            }
+          }
+
+          // Escritorio: hover
+          el.addEventListener('mouseenter', activarGif);
+
+          // Táctil: alternar con cada toque
+          el.addEventListener('click', function () {
+            activarGif();
+            el.classList.toggle('media-activo');
+          });
+        }
+      };
+      test.onerror = function () {
+        // No existe la imagen: se conserva el placeholder punteado tal cual.
+      };
+      test.src = srcImg;
+    });
+  })();
+</script>
+
+</body>
+</html>

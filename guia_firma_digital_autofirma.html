@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Firmar documentos con certificado digital y Autofirma</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+
+  :root {
+    --azul:       #1a2e5a;
+    --azul-medio: #2c4a8a;
+    --acento:     #e8360d;
+    --verde:      #1e7a5a;
+    --gris-claro: #f4f5f7;
+    --gris-borde: #d8dce6;
+    --texto:      #1c1f2e;
+    --blanco:     #ffffff;
+    --fondo:      #e3e6ec;
+    --fondo-tarjeta: #ffffff;
+    --texto-sec:  #444444;
+    --placeholder-bg: #fafbfd;
+    --placeholder-fg: #7d8696;
+    --sombra:     rgba(0,0,0,0.06);
+  }
+
+  html[data-theme="dark"] {
+    --azul:       #2c4a8a;
+    --azul-medio: #5b85d6;
+    --acento:     #ff7a52;
+    --verde:      #3ea882;
+    --gris-claro: #2a2f3d;
+    --gris-borde: #3a4254;
+    --texto:      #e6e9f0;
+    --fondo:      #11151f;
+    --fondo-tarjeta: #1c2230;
+    --texto-sec:  #b8c0d0;
+    --placeholder-bg: #232938;
+    --placeholder-fg: #9aa4b8;
+    --sombra:     rgba(0,0,0,0.35);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { color-scheme: light dark; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--fondo);
+    color: var(--texto);
+    font-size: 15px;
+    line-height: 1.65;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  /* ── ACCESIBILIDAD: saltar al contenido ── */
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    background: var(--azul);
+    color: var(--blanco);
+    padding: 10px 18px;
+    border-radius: 0 0 6px 0;
+    font-size: 13px;
+    font-weight: 600;
+    z-index: 1000;
+    text-decoration: none;
+  }
+  .skip-link:focus {
+    left: 0;
+  }
+
+  /* ── INTERRUPTOR DE TEMA ── */
+  .theme-toggle-wrap {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 900;
+  }
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--fondo-tarjeta);
+    border: 1px solid var(--gris-borde);
+    border-radius: 24px;
+    padding: 6px 14px 6px 10px;
+    cursor: pointer;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--texto);
+    box-shadow: 0 2px 8px var(--sombra);
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+  .theme-toggle:hover { border-color: var(--azul-medio); }
+  .theme-toggle:focus-visible {
+    outline: 2px solid var(--azul-medio);
+    outline-offset: 2px;
+  }
+  .theme-toggle .icon-sun, .theme-toggle .icon-moon {
+    width: 15px; height: 15px;
+    flex-shrink: 0;
+  }
+  html[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+  html:not([data-theme="dark"]) .theme-toggle .icon-moon { display: none; }
+
+  @media (max-width: 900px) {
+    .theme-toggle-wrap { top: 10px; right: 10px; }
+    .theme-toggle span.toggle-label { display: none; }
+    .theme-toggle { padding: 8px; border-radius: 50%; }
+  }
+
+  /* ── AJUSTES GENERALES MODO OSCURO ── */
+  html[data-theme="dark"] li em { color: var(--texto-sec); }
+  html[data-theme="dark"] .img-placeholder { background: var(--placeholder-bg); border-color: var(--gris-borde); color: var(--placeholder-fg); }
+  html[data-theme="dark"] .img-placeholder .ph-text { color: var(--placeholder-fg); }
+  html[data-theme="dark"] .img-placeholder .ph-sub { color: var(--texto-sec); }
+  html[data-theme="dark"] .tabla-redes th { background: var(--gris-claro); color: var(--texto); }
+  html[data-theme="dark"] .tabla-redes td { color: var(--texto-sec); }
+  html[data-theme="dark"] .tabla-redes tr:nth-child(even) td { background: var(--placeholder-bg); }
+  html[data-theme="dark"] .tabla-redes th, html[data-theme="dark"] .tabla-redes td { border-color: var(--gris-borde); }
+  html[data-theme="dark"] ol.referencias li { color: var(--texto-sec); }
+
+  /* Bloques de color pastel (avisos, recursos, cabeceras de sección, chips):
+     se atenúa su luminosidad para que no deslumbren sobre fondo oscuro,
+     conservando el código de color por sección. */
+  html[data-theme="dark"] .aviso,
+  html[data-theme="dark"] .aviso-editar,
+  html[data-theme="dark"] .recurso,
+  html[data-theme="dark"] .s-paso1 .sec-header,
+  html[data-theme="dark"] .s-paso2 .sec-header,
+  html[data-theme="dark"] .s-paso3 .sec-header,
+  html[data-theme="dark"] .s-no .sec-header,
+  html[data-theme="dark"] .chip,
+  html[data-theme="dark"] .firma-ejemplo,
+  html[data-theme="dark"] .campos-correo .etiqueta,
+  html[data-theme="dark"] .editable {
+    filter: brightness(0.6) saturate(0.85);
+  }
+  html[data-theme="dark"] .firma-ejemplo,
+  html[data-theme="dark"] .campos-correo {
+    border-color: var(--gris-borde);
+  }
+  html[data-theme="dark"] .campos-correo .valor { color: var(--texto-sec); }
+  html[data-theme="dark"] section .sec-header[style*="f5f7fb"] {
+    background: var(--gris-claro) !important;
+  }
+  html[data-theme="dark"] section .sec-header[style*="f5f7fb"] h2 {
+    color: var(--azul-medio) !important;
+  }
+  html[data-theme="dark"] section .sec-header[style*="f5f7fb"] .ico {
+    background: var(--placeholder-bg) !important;
+    color: var(--azul-medio) !important;
+  }
+
+  /* ── TUTORIALES RELACIONADOS (dentro de .sec-body) ── */
+  .relacionados-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .relacionado-card {
+    background: var(--gris-claro);
+    border-radius: 8px;
+    padding: 16px 18px;
+    text-decoration: none;
+    color: var(--texto);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border: 1px solid var(--gris-borde);
+    transition: border-color 0.15s ease, transform 0.15s ease, background 0.2s ease;
+  }
+  .relacionado-card:hover {
+    border-color: var(--azul-medio);
+    transform: translateY(-2px);
+  }
+  .relacionado-card:focus-visible {
+    outline: 2px solid var(--azul-medio);
+    outline-offset: 2px;
+  }
+  .relacionado-card .icono {
+    width: 32px; height: 32px;
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    background: #eef4ff;
+    color: var(--azul-medio);
+    margin-bottom: 2px;
+  }
+  html[data-theme="dark"] .relacionado-card .icono { filter: brightness(0.6) saturate(0.85); }
+  .relacionado-card h3 {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--azul);
+    line-height: 1.35;
+  }
+  .relacionado-card p {
+    font-size: 12px;
+    color: var(--texto-sec);
+    line-height: 1.5;
+  }
+  .relacionado-card .ir {
+    margin-top: 4px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--azul-medio);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .relacionado-card .ir svg { width: 11px; height: 11px; transition: transform 0.15s ease; }
+  .relacionado-card:hover .ir svg { transform: translateX(3px); }
+
+  /* ── VOLVER A LA LANZADERA ── */
+  .volver-lanzadera {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--gris-borde);
+    display: flex;
+    justify-content: center;
+  }
+  .volver-lanzadera a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--azul-medio);
+    text-decoration: none;
+    padding: 8px 18px;
+    border: 1px solid var(--gris-borde);
+    border-radius: 20px;
+    background: var(--fondo-tarjeta);
+    transition: border-color 0.15s ease, transform 0.15s ease, background 0.2s ease;
+  }
+  .volver-lanzadera a:hover {
+    border-color: var(--azul-medio);
+    transform: translateX(-3px);
+  }
+  .volver-lanzadera a:focus-visible {
+    outline: 2px solid var(--azul-medio);
+    outline-offset: 2px;
+  }
+  .volver-lanzadera svg { width: 12px; height: 12px; transition: transform 0.15s ease; }
+  .volver-lanzadera a:hover svg { transform: translateX(-3px); }
+
+  @media (max-width: 900px) {
+    .relacionados-grid { grid-template-columns: 1fr; }
+  }
+
+  @media print {
+    .seccion-relacionados, .theme-toggle-wrap, .skip-link { display: none !important; }
+    /* Media toggle: mostrar siempre la imagen estática, nunca el GIF */
+    .media-gif, .media-hint { display: none !important; }
+    .media-toggle.media-cargado { position: static; }
+    .media-static { position: static !important; width: 100%; height: auto; }
+  }
+
+  /* ── CABECERA ── */
+  header {
+    background: var(--azul);
+    color: var(--blanco);
+    margin: 24px 60px 0;
+    padding: 52px 32px 44px;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    right: -60px; top: -60px;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  header .label {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 14px;
+  }
+  header h1 {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1.15;
+  }
+  header h1 span { color: #7eb8ff; }
+  header .subtitulo {
+    margin-top: 14px;
+    font-size: 14px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.65);
+  }
+  header .badges {
+    margin-top: 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  header .fuente-badge {
+    display: block;
+    background: rgba(255,255,255,0.09);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 4px;
+    padding: 8px 14px;
+    font-size: 11.5px;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.6);
+  }
+  header .fuente-badge span { color: rgba(255,255,255,0.9); font-weight: 500; }
+
+  /* ── INTRO ── */
+  .intro {
+    background: var(--azul-medio);
+    margin: 36px 60px 0;
+    padding: 20px 28px;
+    border-radius: 6px;
+    font-size: 15px;
+    color: var(--blanco);
+    font-weight: 700;
+  }
+
+  /* ── AVISO ── */
+  .aviso {
+    background: #fff2f0;
+    border: 1px solid #ffc8c0;
+    border-left: 5px solid var(--acento);
+    border-radius: 0 6px 6px 0;
+    margin: 36px 60px 0;
+    padding: 16px 20px 16px 15px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #b52200;
+  }
+  .aviso strong { color: #8a1900; }
+
+  /* ── CONTENIDO PRINCIPAL ── */
+  main {
+    padding: 36px 60px 60px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+  }
+
+  /* ── SECCIÓN GENÉRICA ── */
+  section {
+    background: var(--fondo-tarjeta);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px var(--sombra);
+  }
+  .full { grid-column: 1 / -1; }
+
+  .sec-header {
+    padding: 18px 24px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .sec-header .ico {
+    width: 34px; height: 34px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px;
+    font-weight: 800;
+    font-family: 'IBM Plex Sans', sans-serif;
+    flex-shrink: 0;
+  }
+  .sec-header h2 {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .sec-body { padding: 4px 24px 22px; }
+
+  /* colores por sección */
+  .s-paso1 .sec-header { background: #eef4ff; border-bottom: 2px solid #c5d8ff; }
+  .s-paso1 .sec-header .ico { background: #d0e2ff; color: var(--azul-medio); }
+  .s-paso1 .sec-header h2 { color: var(--azul); }
+
+  .s-paso2 .sec-header { background: #effaf4; border-bottom: 2px solid #b4e6cc; }
+  .s-paso2 .sec-header .ico { background: #c8f0da; color: var(--verde); }
+  .s-paso2 .sec-header h2 { color: #155940; }
+
+  .s-paso3 .sec-header { background: #fdf6e8; border-bottom: 2px solid #f0d98a; }
+  .s-paso3 .sec-header .ico { background: #faecc0; color: #8a6200; }
+  .s-paso3 .sec-header h2 { color: #6a4900; }
+
+  .s-no   .sec-header { background: #fff2f0; border-bottom: 2px solid #ffc8c0; }
+  .s-no   .sec-header .ico { background: #ffdbd6; color: var(--acento); }
+  .s-no   .sec-header h2 { color: #b52200; }
+
+  /* ── LISTAS ── */
+  ul.check, ul.dot, ul.num {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  ul.check li, ul.dot li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  ul.check li::before { content: '✓'; color: var(--azul-medio); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  ul.dot   li::before { content: '◆'; color: var(--verde); font-size: 9px; flex-shrink: 0; margin-top: 4px; }
+
+  .s-paso2 ul.check li::before { color: var(--verde); }
+  .s-paso3 ul.check li::before { color: #c08600; }
+  .s-no ul.check li::before { color: var(--acento); }
+
+  ul.num {
+    counter-reset: pasonum;
+  }
+  ul.num li {
+    font-size: 13.5px;
+    line-height: 1.55;
+    counter-increment: pasonum;
+    overflow: hidden;
+  }
+  ul.num li .img-placeholder, ul.num li .chip-link, ul.num li .chip-wrap-center { clear: both; }
+  ul.num li::before {
+    content: counter(pasonum);
+    float: left;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--azul-medio);
+    color: var(--blanco);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+    margin-right: 12px;
+    margin-top: 1px;
+  }
+  .s-paso2 ul.num li::before { background: var(--verde); }
+  .s-paso3 ul.num li::before { background: #c08600; }
+
+  /* ── VARIANTE: número flotante, texto en párrafo continuo ── */
+  ul.num-flow {
+    list-style: none;
+    counter-reset: pasonum;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  ul.num-flow li {
+    font-size: 13.5px;
+    line-height: 1.6;
+    counter-increment: pasonum;
+    overflow: hidden;
+  }
+  ul.num-flow li::before {
+    content: counter(pasonum);
+    float: left;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--azul-medio);
+    color: var(--blanco);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+    margin-right: 12px;
+    margin-top: 1px;
+  }
+  .s-paso2 ul.num-flow li::before { background: var(--verde); }
+  .s-paso3 ul.num-flow li::before { background: #c08600; }
+
+  li strong { font-weight: 500; color: var(--texto); }
+  li em     { font-style: italic; color: var(--texto-sec); font-size: 12.5px; }
+
+  /* ── BLOQUE ENLACE / RECURSO ── */
+  .recurso {
+    background: #f0f5ff;
+    border: 1px solid #c5d8ff;
+    border-left: 4px solid var(--azul-medio);
+    border-radius: 0 6px 6px 0;
+    padding: 14px 18px;
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--azul);
+  }
+  .recurso strong { color: var(--azul); }
+  .recurso a {
+    color: var(--azul-medio);
+    text-decoration: none;
+    font-weight: 500;
+    word-break: break-all;
+  }
+  .recurso a:hover { text-decoration: underline; }
+
+  .s-paso2 .recurso { background: #effaf4; border: 1px solid #b4e6cc; border-left: 4px solid var(--verde); color: #155940; }
+  .s-paso2 .recurso a { color: var(--verde); }
+  .s-paso3 .recurso { background: #fdf6e8; border: 1px solid #f0d98a; border-left: 4px solid #c08600; color: #6a4900; }
+  .s-paso3 .recurso a { color: #8a6200; }
+
+  /* ── PLACEHOLDER DE CAPTURA ── */
+  .img-placeholder {
+    margin-top: 10px;
+    border: 2px dashed var(--gris-borde);
+    border-radius: 6px;
+    background: var(--placeholder-bg);
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: #98a2b3;
+    text-align: center;
+    padding: 20px;
+    clear: both;
+  }
+  .img-placeholder .ph-icon { font-size: 24px; }
+  .img-placeholder .ph-text {
+    font-size: 12px;
+    font-weight: 500;
+    color: #8a93a6;
+  }
+  .img-placeholder .ph-sub {
+    font-size: 10.5px;
+    color: #9099ad;
+  }
+
+  /* ── MEDIA TOGGLE: imagen estática que revela un GIF animado ── */
+  /* Cada .img-placeholder puede llevar data-img / data-gif / data-alt.
+     Si data-img no carga (archivo inexistente), se conserva el aspecto
+     punteado actual. Si carga, se sustituye por la imagen, y al pasar
+     el cursor (o al tocar en pantallas táctiles) se muestra el GIF. */
+  .media-toggle.media-cargado {
+    border-style: solid;
+    padding: 0;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    min-height: 0;
+  }
+  .media-toggle .media-static,
+  .media-toggle .media-gif {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .media-toggle .media-gif {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    background: var(--placeholder-bg);
+  }
+  .media-toggle.media-cargado:hover .media-gif,
+  .media-toggle.media-activo .media-gif {
+    opacity: 1;
+  }
+  .media-toggle .media-hint {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 4px 9px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+  }
+  .media-toggle.media-cargado:hover .media-hint,
+  .media-toggle.media-activo .media-hint {
+    opacity: 0;
+  }
+  .media-toggle .media-hint svg { width: 9px; height: 9px; }
+  /* En pantallas táctiles, mostrar siempre la pista de "tocar para reproducir" */
+  @media (hover: none) {
+    .media-toggle .media-hint { opacity: 1; }
+    .media-toggle.media-activo .media-hint { opacity: 0; }
+  }
+
+  /* ── CHIPS / BOTONES ── */
+  .chip {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 12.5px;
+    font-weight: 500;
+    font-family: 'IBM Plex Sans', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .chip svg { width: 14px; height: 14px; flex-shrink: 0; }
+  .chip-win { background: #d6eaff; color: #1a3d7a; }
+  .chip-mac { background: #e8e8ec; color: #333; }
+  .chip-linux { background: #fde8d6; color: #8a4a10; }
+  .chip-fnmt { background: #d6f0e4; color: #10503a; }
+  .chip-link { margin-top: 10px; justify-content: center; width: 100%; text-decoration: none; display: flex; }
+  .chip-wrap-center { margin-top: 10px; text-align: center; }
+  .chip-wrap-center .chip { text-decoration: none; }
+
+  /* ── TABLA COMPARATIVA ── */
+  .tabla-redes {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 4px;
+  }
+  .tabla-redes th, .tabla-redes td {
+    border: 1px solid var(--gris-borde);
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  .tabla-redes th {
+    background: #f5f7fb;
+    color: var(--azul);
+    font-weight: 700;
+    font-size: 12.5px;
+  }
+  .tabla-redes td strong { color: var(--azul-medio); }
+  .tabla-redes tr:nth-child(even) td { background: #fafbfd; }
+
+  /* ── REFERENCIAS ── */
+  ol.referencias {
+    list-style: none;
+    counter-reset: refnum;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  ol.referencias li {
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: #444;
+    counter-increment: refnum;
+    overflow: hidden;
+  }
+  ol.referencias li::before {
+    content: counter(refnum) ".";
+    float: left;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 700;
+    color: var(--azul-medio);
+    min-width: 20px;
+    margin-right: 4px;
+  }
+  ol.referencias a {
+    color: var(--azul-medio);
+    text-decoration: none;
+    word-break: break-word;
+  }
+  ol.referencias a:hover { text-decoration: underline; }
+
+  /* ── FOOTER ── */
+  footer {
+    margin: 0 60px 48px;
+    padding: 16px 24px;
+    background: var(--azul);
+    border-radius: 6px;
+    color: rgba(255,255,255,0.55);
+    font-size: 11.5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  footer strong { color: rgba(255,255,255,0.85); }
+
+  @media print {
+    body { background: white; }
+    header, footer { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  @media (max-width: 900px) {
+    main { grid-template-columns: 1fr; }
+    header { margin: 24px 20px 0; padding-left: 20px; padding-right: 20px; border-radius: 6px; }
+    .intro { margin-left: 20px; margin-right: 20px; padding-left: 20px; padding-right: 20px; }
+    .aviso { margin-left: 20px; margin-right: 20px; }
+    main { margin-left: 0; margin-right: 0; padding-left: 20px; padding-right: 20px; }
+    footer { margin-left: 20px; margin-right: 20px; }
+    .tabla-redes { font-size: 11.5px; }
+    .tabla-redes th, .tabla-redes td { padding: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<a href="#contenido" class="skip-link">Saltar al contenido</a>
+
+<div class="theme-toggle-wrap">
+  <button type="button" class="theme-toggle" id="themeToggle" aria-pressed="false" aria-label="Cambiar a modo oscuro">
+    <svg class="icon-sun" viewBox="0 0 512 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M256 96a32 32 0 0 0 32-32V32a32 32 0 0 0-64 0v32a32 32 0 0 0 32 32zm0 320a32 32 0 0 0-32 32v32a32 32 0 0 0 64 0v-32a32 32 0 0 0-32-32zm160-160a32 32 0 0 0 32-32h32a32 32 0 0 0 0-64h-32a32 32 0 0 0-32 32zm-320 0a32 32 0 0 0-32-32H32a32 32 0 0 0 0 64h32a32 32 0 0 0 32-32zm301.25-114.75 22.62-22.63a32 32 0 0 0-45.25-45.25l-22.62 22.63a32 32 0 0 0 45.25 45.25zM166.4 346.4l-22.63 22.62a32 32 0 0 0 45.26 45.25l22.62-22.62a32 32 0 0 0-45.25-45.25zm0-180.8a32 32 0 0 0 45.25-45.25l-22.62-22.62a32 32 0 0 0-45.26 45.25zm180.8 180.8a32 32 0 0 0-45.25 45.25l22.62 22.62a32 32 0 0 0 45.25-45.25zM256 128a128 128 0 1 0 128 128 128 128 0 0 0-128-128z"/></svg>
+    <svg class="icon-moon" viewBox="0 0 384 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M223.5 32C100 32 0 132 0 256s100 224 223.5 224c60.6 0 115.5-24.2 155.8-63.4 5.2-5 6.7-12.8 3.7-19.4s-9.9-10.4-17.1-9.5c-9.6 1.2-19.4 1.8-29.4 1.8-118.5 0-214.6-96.1-214.6-214.6 0-49.6 16.8-95.4 45-131.7 4.4-5.7 4.5-13.6.5-19.6S231.5 27.6 224 28c-.2 0-.5 0-.5 0z"/></svg>
+    <span class="toggle-label">Modo oscuro</span>
+  </button>
+</div>
+
+<!-- CABECERA -->
+<header>
+  <div class="label">Gobierno de Canarias · Consejería de Educación</div>
+  <h1>Firmar documentos con <span>certificado digital</span><br>y Autofirma</h1>
+  <p class="subtitulo">Guía para obtener tu identidad digital (certificado o Cl@ve), instalar Autofirma y firmar documentos PDF para trámites con la Administración educativa.</p>
+  <div class="badges">
+    <div class="fuente-badge">📄 Recursos utilizados: <span>Sede Electrónica del Gobierno de Canarias · Autofirma (Administración Electrónica) · FNMT-RCM · Cl@ve</span></div>
+    <div class="fuente-badge">👤 Elaborado por: <span><a href="https://www3.gobiernodecanarias.org/medusa/ecoblog/rtorjim/" target="_blank" style="color: inherit; text-decoration: underline;">Ramón S. Torrente Jiménez</a></span> · Coordinador TIC · <a href="https://www3.gobiernodecanarias.org/medusa/edublog/iesprimerodemayo/" target="_blank" style="color: inherit; text-decoration: underline;">IES Primero de Mayo</a> · Curso 2026-2027, con la colaboración de <span><a href="https://www3.gobiernodecanarias.org/medusa/ecoblog/lgodmar/" target="_blank" style="color: inherit; text-decoration: underline;">Lara Godoy Marrero</a></span></div>
+  </div>
+</header>
+
+<!-- AVISO -->
+<div class="aviso">
+  <strong>⚠️ Esto no sustituye a GobCan Verifica.</strong> El certificado digital, el DNIe y Cl@ve sirven para <strong>firmar documentos y realizar trámites</strong> en sedes electrónicas (propias, de tu centro, oposiciones, etc.). GobCan Verifica, en cambio, es para el <strong>acceso diario</strong> al correo y aplicaciones corporativas. Son sistemas distintos y complementarios.
+</div>
+
+<!-- INTRO -->
+<div class="intro">
+  Para firmar documentos electrónicamente (solicitudes, autorizaciones, actas) necesitas dos elementos: una <strong>identidad digital</strong> (certificado, DNIe o Cl@ve) y la aplicación <strong>Autofirma</strong>, que es la que realiza la firma de archivos PDF en tu ordenador.
+</div>
+
+<!-- CONTENIDO PRINCIPAL -->
+<main id="contenido">
+
+  <!-- PASO 1 -->
+  <section class="s-paso1 full">
+    <div class="sec-header">
+      <div class="ico">1</div>
+      <h2>Primero: consigue tu identidad digital</h2>
+    </div>
+    <div class="sec-body">
+      <table class="tabla-redes">
+        <thead>
+          <tr>
+            <th>Opción</th>
+            <th>¿Qué es?</th>
+            <th>Cómo se obtiene</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Certificado FNMT</strong></td>
+            <td>Certificado software que se instala en el navegador/equipo</td>
+            <td>Solicitud online en la web de la FNMT-RCM y acreditación presencial en una oficina de registro (p. ej. Delegación de Educación)</td>
+          </tr>
+          <tr>
+            <td><strong>DNI electrónico (DNIe)</strong></td>
+            <td>Certificado incorporado al DNI físico</td>
+            <td>Requiere lector de tarjetas (o NFC en móvil) y el PIN del DNIe</td>
+          </tr>
+          <tr>
+            <td><strong>Cl@ve Permanente</strong></td>
+            <td>Usuario + contraseña + código SMS de un solo uso</td>
+            <td>Registro online (si ya tienes certificado/DNIe) o presencial en una oficina de registro con DNIe y móvil</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="recurso">
+        <strong>Sistemas aceptados:</strong> la Sede Electrónica del Gobierno de Canarias acepta DNI/NIE electrónico, certificados de la plataforma @firma (incluida la FNMT) y Cl@ve. El <strong>personal docente</strong> puede realizar el registro en Cl@ve en la Delegación Insular de Educación, llevando el DNIe y el móvil.
+      </div>
+    </div>
+  </section>
+
+  <!-- PASOS 2 Y 3 -->
+  <div style="display: flex; flex-direction: column; gap: 28px; grid-column: 1 / -1;">
+  <section class="s-paso2">
+    <div class="sec-header">
+      <div class="ico">2</div>
+      <h2>Segundo: instala el certificado y Autofirma en tu equipo</h2>
+    </div>
+    <div class="sec-body">
+      <ul class="num">
+        <li>
+          Si has obtenido un <strong>certificado FNMT</strong>, lo recibirás por correo electrónico como un archivo. Haz doble clic sobre él para <strong>importarlo</strong> al almacén de certificados de tu equipo.
+          <div class="img-placeholder media-toggle"
+               data-img="img/firma-autofirma-01.png"
+               data-gif="img/firma-autofirma-01.gif"
+               data-alt="Si has obtenido un certificado FNMT, lo recibirás por correo electrónico como un archivo">
+            <div class="ph-icon">🖼️</div>
+            <div class="ph-text">Captura de pantalla</div>
+            <div class="ph-sub">Sustituye este recuadro por tu imagen</div>
+          </div>
+        </li>
+        <li>
+          Durante la importación, marca <strong>«Habilitar protección segura de clave privada»</strong>, selecciona nivel de seguridad <strong>«Alto»</strong> y crea una <strong>contraseña</strong> (mínimo 8 caracteres, con letras, números y símbolos). Esta contraseña se te pedirá cada vez que uses el certificado.
+          <div class="img-placeholder media-toggle"
+               data-img="img/firma-autofirma-02.png"
+               data-gif="img/firma-autofirma-02.gif"
+               data-alt="Durante la importación, marca «Habilitar protección segura de clave privada», selecciona nivel de seguridad «Alto» y">
+            <div class="ph-icon">🖼️</div>
+            <div class="ph-text">Captura de pantalla</div>
+            <div class="ph-sub">Sustituye este recuadro por tu imagen</div>
+          </div>
+        </li>
+        <li>
+          Descarga e instala <strong>Autofirma</strong>, la aplicación oficial para la firma electrónica de documentos, desde el Portal de Administración Electrónica.
+          <div class="img-placeholder media-toggle"
+               data-img="img/firma-autofirma-03.png"
+               data-gif="img/firma-autofirma-03.gif"
+               data-alt="Descarga e instala Autofirma, la aplicación oficial para la firma electrónica de documentos, desde el Portal de Administración Electrónica">
+            <div class="ph-icon">🖼️</div>
+            <div class="ph-text">Captura de pantalla</div>
+            <div class="ph-sub">Sustituye este recuadro por tu imagen</div>
+          </div>
+          <div class="chip-wrap-center">
+            <a class="chip chip-fnmt" href="https://firmaelectronica.gob.es/Home/Descargas.html" target="_blank" aria-label="Descargar Autofirma (se abre en una pestaña nueva)">
+              <svg viewBox="0 0 384 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.3V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.3L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"/></svg>
+              Descargar Autofirma
+            </a>
+          </div>
+        </li>
+        <li>
+          Tras instalar Autofirma, si la sede electrónica no la detecta, prueba la opción <strong>«Restaurar instalación»</strong> incluida en la propia aplicación (configura el navegador para confiar en sus certificados raíz).
+          <div class="img-placeholder media-toggle"
+               data-img="img/firma-autofirma-04.png"
+               data-gif="img/firma-autofirma-04.gif"
+               data-alt="Tras instalar Autofirma, si la sede electrónica no la detecta, prueba la opción «Restaurar instalación» incluida en la">
+            <div class="ph-icon">🖼️</div>
+            <div class="ph-text">Captura de pantalla</div>
+            <div class="ph-sub">Sustituye este recuadro por tu imagen</div>
+          </div>
+        </li>
+      </ul>
+      <div class="recurso">
+        <strong>Autofirma:</strong> compatible con Windows, macOS y Linux, y con los navegadores Chrome, Edge y Firefox (versiones recientes).
+      </div>
+    </div>
+  </section>
+
+  <!-- PASO 3 -->
+  <section class="s-paso3">
+    <div class="sec-header">
+      <div class="ico">3</div>
+      <h2>Tercero: firma un documento PDF</h2>
+    </div>
+    <div class="sec-body">
+      <ul class="num">
+        <li>
+          En la sede o aplicación donde debas firmar (sede electrónica, plataforma del centro, etc.), localiza la opción <strong>«Firmar documento»</strong>, generalmente en formato PDF.
+          <div class="img-placeholder media-toggle"
+               data-img="img/firma-autofirma-05.png"
+               data-gif="img/firma-autofirma-05.gif"
+               data-alt="En la sede o aplicación donde debas firmar (sede electrónica, plataforma del centro, etc">
+            <div class="ph-icon">🖼️</div>
+            <div class="ph-text">Captura de pantalla</div>
+            <div class="ph-sub">Sustituye este recuadro por tu imagen</div>
+          </div>
+        </li>
+        <li>
+          El navegador lanzará <strong>Autofirma</strong>, que te mostrará una ventana solicitando permiso para firmar. Acepta y, si tu certificado está protegido, introduce la <strong>contraseña</strong> que creaste al importarlo.
+          <div class="img-placeholder media-toggle"
+               data-img="img/firma-autofirma-06.png"
+               data-gif="img/firma-autofirma-06.gif"
+               data-alt="El navegador lanzará Autofirma, que te mostrará una ventana solicitando permiso para firmar">
+            <div class="ph-icon">🖼️</div>
+            <div class="ph-text">Captura de pantalla</div>
+            <div class="ph-sub">Sustituye este recuadro por tu imagen</div>
+          </div>
+        </li>
+        <li>
+          Selecciona el <strong>certificado con el que quieres firmar</strong> (si tienes varios instalados) y confirma. El documento quedará firmado electrónicamente.
+          <div class="img-placeholder media-toggle"
+               data-img="img/firma-autofirma-07.png"
+               data-gif="img/firma-autofirma-07.gif"
+               data-alt="Selecciona el certificado con el que quieres firmar (si tienes varios instalados) y confirma">
+            <div class="ph-icon">🖼️</div>
+            <div class="ph-text">Captura de pantalla</div>
+            <div class="ph-sub">Sustituye este recuadro por tu imagen</div>
+          </div>
+        </li>
+      </ul>
+      <div class="recurso">
+        <strong>Importante:</strong> solo se pueden firmar archivos <strong>PDF que no estén protegidos por contraseña</strong>. Si el documento está protegido, deberás obtener una copia sin protección antes de firmarlo.
+      </div>
+    </div>
+  </section>
+  </div>
+
+  <!-- SI SIGUES TENIENDO PROBLEMAS -->
+  <section class="s-no full">
+    <div class="sec-header">
+      <div class="ico">!</div>
+      <h2>Si sigues teniendo problemas</h2>
+    </div>
+    <div class="sec-body">
+      <p style="font-size: 13.5px; line-height: 1.6; margin-bottom: 10px;">Si tras instalar Autofirma el sistema <strong>no la detecta</strong>, prueba la opción «Restaurar instalación» dentro de la propia aplicación, que reconfigura el navegador para reconocerla.</p>
+      <p style="font-size: 13.5px; line-height: 1.6; margin-bottom: 10px;">Si una solicitud queda en estado <strong>«PARCIALMENTE FIRMADA»</strong>, puede deberse a un problema temporal de comunicación con el servicio de gestión documental: vuelve a intentar la firma; si el problema persiste, contacta con el soporte técnico de la Sede Electrónica.</p>
+      <p style="font-size: 13.5px; line-height: 1.6; margin-bottom: 10px;">Mantén siempre <strong>Autofirma y tu navegador actualizados</strong> a sus últimas versiones para evitar incompatibilidades.</p>
+      <p style="font-size: 13.5px; line-height: 1.6;">Para incidencias técnicas relacionadas con aplicaciones del centro (no con la Sede Electrónica del Gobierno de Canarias, que tiene su propio soporte), <strong>abre una incidencia en Sírvete (CAU_CE)</strong>.</p>
+    </div>
+  </section>
+
+  <!-- AVISO RGPD -->
+  <div class="aviso full" style="margin: 0;">
+    <strong>🔒 Protección de datos.</strong> Tu certificado digital y la contraseña que lo protege son <strong>personales e intransferibles</strong>. No los compartas ni los instales en equipos compartidos sin eliminarlos después.
+  </div>
+
+  <!-- REFERENCIAS -->
+  <section class="full">
+    <div class="sec-header" style="background:#f5f7fb; border-bottom: 2px solid var(--gris-borde);">
+      <div class="ico" style="background:#e0e8ff; color: var(--azul-medio);">§</div>
+      <h2 style="color: var(--azul);">Referencias</h2>
+    </div>
+    <div class="sec-body">
+      <ol class="referencias">
+        <li>Reglamento General de Protección de Datos (RGPD) — Reglamento (UE) 2016/679.</li>
+        <li>Ley Orgánica 3/2018, de 5 de diciembre, de Protección de Datos Personales y garantía de los derechos digitales (LOPDGDD).</li>
+        <li>Sistemas de identificación y firma aceptados — Sede Electrónica del Gobierno de Canarias: DNIe, certificados de @firma (FNMT) y Cl@ve.</li>
+        <li>Certificado digital — Requisitos Técnicos, Sede Electrónica del Gobierno de Canarias.</li>
+        <li>Autofirma — Portal de Administración Electrónica, Gobierno de España: descarga, instalación y restauración.</li>
+        <li>Firma digital — Blog CEP Lanzarote / CEP Gran Canaria Noroeste: importación de certificados FNMT y uso de Autofirma para PDFs.</li>
+        <li>Portal Sírvete — Consejería de Educación, Formación Profesional, Actividades Físicas y Deportes del Gobierno de Canarias: gestión de incidencias técnicas (CAU_CE).</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- TUTORIALES RELACIONADOS -->
+  <section class="full seccion-relacionados">
+    <div class="sec-header" style="background:#f5f7fb; border-bottom: 2px solid var(--gris-borde);">
+      <div class="ico" style="background:#e0e8ff; color: var(--azul-medio);">⇄</div>
+      <h2 style="color: var(--azul);">Tutoriales relacionados</h2>
+    </div>
+    <div class="sec-body">
+      <div class="relacionados-grid">
+
+        <a class="relacionado-card" href="guia_miclave.html">
+          <div class="icono">🔑</div>
+          <h3>Recuperar o cambiar la contraseña corporativa (MiClave)</h3>
+          <p>Gestiona tu identidad corporativa: la base sobre la que se apoyan el resto de accesos digitales.</p>
+          <div class="ir">Ver guía <svg viewBox="0 0 448 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.7 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></svg></div>
+        </a>
+
+        <a class="relacionado-card" href="guia_gobcan_verifica_dispositivo.html">
+          <div class="icono">📱</div>
+          <h3>Configurar GobCan Verifica en un nuevo dispositivo</h3>
+          <p>Otro sistema de identidad digital: la verificación en dos pasos para el acceso diario al correo y aplicaciones.</p>
+          <div class="ir">Ver guía <svg viewBox="0 0 448 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.7 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></svg></div>
+        </a>
+
+        <a class="relacionado-card" href="guia_proteccion_datos.html">
+          <div class="icono">🔒</div>
+          <h3>Protección de datos y uso responsable de las TIC</h3>
+          <p>Buenas prácticas sobre identidad digital y credenciales que complementan el uso de tu certificado.</p>
+          <div class="ir">Ver guía <svg viewBox="0 0 448 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.7 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></svg></div>
+        </a>
+
+      </div>
+
+      <div class="volver-lanzadera">
+        <a href="lanzadera_tutoriales.html">
+          <svg viewBox="0 0 448 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg>
+          Volver a la lanzadera de tutoriales
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div>Guía elaborada por <strong><a href="https://www3.gobiernodecanarias.org/medusa/ecoblog/rtorjim/" target="_blank" style="color: inherit; text-decoration: underline;">Ramón S. Torrente Jiménez</a></strong>, Coordinador TIC, con la colaboración de <strong><a href="https://www3.gobiernodecanarias.org/medusa/ecoblog/lgodmar/" target="_blank" style="color: inherit; text-decoration: underline;">Lara Godoy Marrero</a></strong> · Firmar documentos con certificado digital y Autofirma</div>
+  <div>Curso 2026–2027</div>
+</footer>
+
+<script>
+  (function () {
+    var html = document.documentElement;
+    var btn = document.getElementById('themeToggle');
+    var STORAGE_KEY = 'tic-tema';
+
+    function aplicarTema(tema) {
+      if (tema === 'dark') {
+        html.setAttribute('data-theme', 'dark');
+        btn.setAttribute('aria-pressed', 'true');
+        btn.setAttribute('aria-label', 'Cambiar a modo claro');
+      } else {
+        html.removeAttribute('data-theme');
+        btn.setAttribute('aria-pressed', 'false');
+        btn.setAttribute('aria-label', 'Cambiar a modo oscuro');
+      }
+    }
+
+    var guardado = localStorage.getItem(STORAGE_KEY);
+    if (guardado) {
+      aplicarTema(guardado);
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      aplicarTema('dark');
+    }
+
+    btn.addEventListener('click', function () {
+      var actual = html.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      var nuevo = actual === 'dark' ? 'light' : 'dark';
+      aplicarTema(nuevo);
+      localStorage.setItem(STORAGE_KEY, nuevo);
+    });
+  })();
+</script>
+
+<script>
+  // ── MEDIA TOGGLE: sustituye el placeholder punteado por una imagen real
+  // (y revela un GIF animado al pasar el cursor o al tocar en pantallas táctiles)
+  // cuando existen los archivos indicados en data-img / data-gif.
+  // Si data-img no existe (404), el placeholder punteado se mantiene sin cambios.
+  (function () {
+    var contenedores = document.querySelectorAll('.media-toggle[data-img]');
+
+    contenedores.forEach(function (el) {
+      var srcImg = el.getAttribute('data-img');
+      var srcGif = el.getAttribute('data-gif');
+
+      var test = new Image();
+      test.onload = function () {
+        // La imagen estática existe: construir el componente.
+        var fallbackHTML = el.innerHTML;
+        el.innerHTML = '';
+        el.classList.add('media-cargado');
+
+        var imgEstatica = document.createElement('img');
+        imgEstatica.className = 'media-static';
+        imgEstatica.src = srcImg;
+        imgEstatica.alt = el.getAttribute('data-alt') || 'Captura de pantalla del paso';
+        el.appendChild(imgEstatica);
+
+        if (srcGif) {
+          var imgGif = document.createElement('img');
+          imgGif.className = 'media-gif';
+          imgGif.alt = '';
+          imgGif.setAttribute('aria-hidden', 'true');
+          imgGif.loading = 'lazy';
+          el.appendChild(imgGif);
+
+          var hint = document.createElement('span');
+          hint.className = 'media-hint';
+          hint.innerHTML = '<svg viewBox="0 0 384 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.3-23-41L73 39z"/></svg>Toca para reproducir';
+          el.appendChild(hint);
+
+          var gifCargado = false;
+          function activarGif() {
+            if (!gifCargado) {
+              imgGif.src = srcGif;
+              gifCargado = true;
+            }
+          }
+
+          // Escritorio: hover
+          el.addEventListener('mouseenter', activarGif);
+
+          // Táctil: alternar con cada toque
+          el.addEventListener('click', function () {
+            activarGif();
+            el.classList.toggle('media-activo');
+          });
+        }
+      };
+      test.onerror = function () {
+        // No existe la imagen: se conserva el placeholder punteado tal cual.
+      };
+      test.src = srcImg;
+    });
+  })();
+</script>
+
+</body>
+</html>
