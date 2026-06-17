@@ -1,7 +1,7 @@
 {
-  "name": "Guías TIC · IES Primero de Mayo",
-  "short_name": "Guías TIC",
-  "description": "Guías y tutoriales TIC para el profesorado del IES Primero de Mayo",
+  "name": "Portal TIC · IES Primero de Mayo",
+  "short_name": "Portal TIC",
+  "description": "Portal de coordinación TIC para el profesorado del IES Primero de Mayo",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
