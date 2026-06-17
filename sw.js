@@ -1,6 +1,6 @@
 // ── Service Worker · Portal TIC IES Primero de Mayo ──
 
-const CACHE_VERSION = '2026.06.17:01';
+const CACHE_VERSION = '2026.06.17:02';
 
 const ARCHIVOS_CACHE = [
   './',
