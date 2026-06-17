@@ -353,9 +353,9 @@
   header {
     background: var(--azul);
     color: var(--blanco);
-    margin: 24px 60px 0;
-    padding: 52px 32px 44px;
-    border-radius: 8px;
+    margin: 0;
+    padding: 52px 60px 44px;
+    border-radius: 0;
     position: relative;
     overflow: hidden;
   }
@@ -407,6 +407,8 @@
     color: rgba(255,255,255,0.6);
   }
   header .fuente-badge span { color: rgba(255,255,255,0.9); font-weight: 500; }
+  header .fuente-badge a,
+  header .fuente-badge span { display: inline; }
 
   /* ── INTRO ── */
   .intro {
@@ -735,10 +737,10 @@
 
   /* ── FOOTER ── */
   footer {
-    margin: 0 60px 48px;
-    padding: 16px 24px;
+    margin: 0;
+    padding: 16px 60px;
     background: var(--azul);
-    border-radius: 6px;
+    border-radius: 0;
     color: rgba(255,255,255,0.55);
     font-size: 11.5px;
     display: flex;
@@ -756,11 +758,11 @@
 
   @media (max-width: 900px) {
     main { grid-template-columns: 1fr; }
-    header { margin: 24px 20px 0; padding-left: 20px; padding-right: 20px; border-radius: 6px; }
+    header { margin: 0; padding-left: 20px; padding-right: 20px; border-radius: 0; }
     .intro { margin-left: 20px; margin-right: 20px; padding-left: 20px; padding-right: 20px; }
     .aviso { margin-left: 20px; margin-right: 20px; }
     main { margin-left: 0; margin-right: 0; padding-left: 20px; padding-right: 20px; }
-    footer { margin-left: 20px; margin-right: 20px; }
+    footer { margin-left: 0; margin-right: 0; padding-left: 20px; padding-right: 20px; }
   }
 </style>
 </head>
@@ -792,7 +794,7 @@
   <h1>Videoconferencias con el <span>sistema oficial</span> (Jitsi)</h1>
   <p class="subtitulo">Guía para unirte a una videollamada y para crear tu propia sala de videoconferencia a través del servicio oficial de Multiconferencia Web de la Consejería de Educación.</p>
   <div class="badges">
-    <div class="fuente-badge">📄 Recursos utilizados: <span>video.canariaseducacion.org (Jitsi Meet) · Cuenta corporativa Gobierno de Canarias · Navegador Google Chrome</span></div>
+    <div class="fuente-badge">📄 Recursos utilizados: <span>video.canariaseducacion.org (Jitsi Meet) · Cuenta corporativa Gobierno de Canarias · Navegador Mozilla Firefox</span></div>
     <div class="fuente-badge">👤 Elaborado por: <span><a href="https://www3.gobiernodecanarias.org/medusa/ecoblog/rtorjim/" target="_blank" style="color: inherit; text-decoration: underline;">Ramón S. Torrente Jiménez</a></span> · Coordinador TIC · <a href="https://www3.gobiernodecanarias.org/medusa/edublog/iesprimerodemayo/" target="_blank" style="color: inherit; text-decoration: underline;">IES Primero de Mayo</a> · Curso 2026-2027, con la colaboración de <span><a href="https://www3.gobiernodecanarias.org/medusa/ecoblog/lgodmar/" target="_blank" style="color: inherit; text-decoration: underline;">Lara Godoy Marrero</a></span></div>
   </div>
   <div class="tiempo-lectura" id="tiempoLectura" aria-label="Tiempo estimado de lectura">
@@ -808,7 +810,7 @@
 
 <!-- INTRO -->
 <div class="intro">
-  El servicio oficial de videoconferencia de la Consejería está basado en <strong>Jitsi Meet</strong>, software de código abierto alojado en los servidores propios de la Consejería. Permite vídeo, audio, compartir pantalla y documentos, con hasta unos <strong>1.000 participantes</strong> concurrentes. Se recomienda usar <strong>Google Chrome</strong> para mayor compatibilidad.
+  El servicio oficial de videoconferencia de la Consejería está basado en <strong>Jitsi Meet</strong>, software de código abierto alojado en los servidores propios de la Consejería. Permite vídeo, audio, compartir pantalla y documentos, con hasta unos <strong>1.000 participantes</strong> concurrentes. Se recomienda usar <strong>Mozilla Firefox</strong> para mayor compatibilidad.
 </div>
 
 <!-- CONTENIDO PRINCIPAL -->
@@ -971,7 +973,7 @@
     </div>
     <div class="sec-body">
       <p style="font-size: 13.5px; line-height: 1.6; margin-bottom: 10px;">Si la cámara o el micrófono <strong>no funcionan</strong>, comprueba primero los permisos del navegador (icono de candado/cámara en la barra de direcciones) y que ningún otro programa esté usando el dispositivo.</p>
-      <p style="font-size: 13.5px; line-height: 1.6; margin-bottom: 10px;">Si tienes <strong>problemas de compatibilidad</strong>, prueba a usar <strong>Google Chrome</strong>, que es el navegador recomendado para este servicio.</p>
+      <p style="font-size: 13.5px; line-height: 1.6; margin-bottom: 10px;">Si tienes <strong>problemas de compatibilidad</strong>, prueba a usar <strong>Mozilla Firefox</strong>, que es el navegador recomendado para este servicio.</p>
       <p style="font-size: 13.5px; line-height: 1.6;">Para incidencias con el servicio en sí (no se crea la sala, error de validación con la cuenta corporativa, etc.), <strong>abre una incidencia en Sírvete (CAU_CE)</strong> antes de realizar la videollamada, si tienes margen de tiempo.</p>
     </div>
   </section>

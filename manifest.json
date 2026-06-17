@@ -2,7 +2,7 @@
   "name": "Guías TIC · IES Primero de Mayo",
   "short_name": "Guías TIC",
   "description": "Guías y tutoriales TIC para el profesorado del IES Primero de Mayo",
-  "start_url": "./lanzadera_tutoriales.html",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#1a2e5a",

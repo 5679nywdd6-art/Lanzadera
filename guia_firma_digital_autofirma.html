@@ -353,9 +353,9 @@
   header {
     background: var(--azul);
     color: var(--blanco);
-    margin: 24px 60px 0;
-    padding: 52px 32px 44px;
-    border-radius: 8px;
+    margin: 0;
+    padding: 52px 60px 44px;
+    border-radius: 0;
     position: relative;
     overflow: hidden;
   }
@@ -407,6 +407,8 @@
     color: rgba(255,255,255,0.6);
   }
   header .fuente-badge span { color: rgba(255,255,255,0.9); font-weight: 500; }
+  header .fuente-badge a,
+  header .fuente-badge span { display: inline; }
 
   /* ── INTRO ── */
   .intro {
@@ -760,10 +762,10 @@
 
   /* ── FOOTER ── */
   footer {
-    margin: 0 60px 48px;
-    padding: 16px 24px;
+    margin: 0;
+    padding: 16px 60px;
     background: var(--azul);
-    border-radius: 6px;
+    border-radius: 0;
     color: rgba(255,255,255,0.55);
     font-size: 11.5px;
     display: flex;
@@ -781,11 +783,11 @@
 
   @media (max-width: 900px) {
     main { grid-template-columns: 1fr; }
-    header { margin: 24px 20px 0; padding-left: 20px; padding-right: 20px; border-radius: 6px; }
+    header { margin: 0; padding-left: 20px; padding-right: 20px; border-radius: 0; }
     .intro { margin-left: 20px; margin-right: 20px; padding-left: 20px; padding-right: 20px; }
     .aviso { margin-left: 20px; margin-right: 20px; }
     main { margin-left: 0; margin-right: 0; padding-left: 20px; padding-right: 20px; }
-    footer { margin-left: 20px; margin-right: 20px; }
+    footer { margin-left: 0; margin-right: 0; padding-left: 20px; padding-right: 20px; }
     .tabla-redes { font-size: 11.5px; }
     .tabla-redes th, .tabla-redes td { padding: 8px; }
   }
@@ -941,7 +943,7 @@
         </li>
       </ul>
       <div class="recurso">
-        <strong>Autofirma:</strong> compatible con Windows, macOS y Linux, y con los navegadores Chrome, Edge y Firefox (versiones recientes).
+        <strong>Autofirma:</strong> compatible con Windows, macOS y Linux, y con los navegadores Firefox, Edge y Chrome (versiones recientes).
       </div>
     </div>
   </section>

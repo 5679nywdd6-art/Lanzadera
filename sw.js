@@ -1,8 +1,6 @@
-// PWA CENOBIO
-// Service Worker
-// Guías TIC IES Primero de Mayo
+// ── Service Worker · Portal TIC IES Primero de Mayo ──
 
-const CACHE_VERSION = '2026.06.16:05';
+const CACHE_VERSION = '2026.06.17:01';
 
 const ARCHIVOS_CACHE = [
   './',
@@ -28,8 +26,6 @@ const ARCHIVOS_CACHE = [
   './guia_proteccion_datos.html',
 ];
 
-// Instalación
-
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_VERSION)
@@ -37,8 +33,6 @@ self.addEventListener('install', event => {
       .then(() => self.skipWaiting())
   );
 });
-
-// Activación
 
 self.addEventListener('activate', event => {
   event.waitUntil(
