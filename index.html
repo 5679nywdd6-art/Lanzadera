@@ -366,7 +366,18 @@
   footer strong { color: rgba(255,255,255,0.85); }
   footer a { color: inherit; text-decoration: underline; }
 
-  /* ── TARJETA EN CONSTRUCCIÓN ── */
+  .card-tag-tutorial {
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 10px;
+    background: #f0e8ff;
+    color: #6a00cc;
+    letter-spacing: 0.3px;
+  }
+  html[data-theme="dark"] .card-tag-tutorial { filter: brightness(0.6) saturate(0.85); }
+
+
   .recurso-card.en-construccion {
     opacity: 0.6;
     cursor: not-allowed;
@@ -558,11 +569,15 @@
 <div class="buscador-wrap">
   <div class="buscador">
     <svg viewBox="0 0 512 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>
-    <input type="text" id="buscador" placeholder="Buscar un recurso..." autocomplete="off" aria-label="Buscar un recurso">
+    <input type="text" id="buscador" placeholder="Buscar recursos, tutoriales..." autocomplete="off" aria-label="Buscar recursos y tutoriales">
   </div>
 </div>
 
 <div class="sin-resultados" id="sinResultados">No se encontraron recursos que coincidan con tu búsqueda.</div>
+
+<!-- RESULTADOS DE TUTORIALES (solo visibles al buscar) -->
+<div class="seccion-titulo" id="titulo-tutoriales" style="display:none;">Tutoriales encontrados</div>
+<div class="recursos-grid" id="resultados-tutoriales" style="display:none;"></div>
 
 <!-- RECURSOS -->
 <div class="seccion-titulo" id="contenido">Recursos del centro</div>
@@ -754,21 +769,69 @@
 </script>
 
 <script>
-  // ── BUSCADOR ──
+  // ── BUSCADOR GLOBAL ──
+  // Busca en las tarjetas del portal Y en los tutoriales de la lanzadera.
   (function () {
     var input    = document.getElementById('buscador');
     var sinRes   = document.getElementById('sinResultados');
     var secciones = Array.from(document.querySelectorAll('.seccion-titulo'));
     var tarjetas  = Array.from(document.querySelectorAll('.recurso-card'));
+    var contenedor = document.getElementById('resultados-tutoriales');
+
+    // ── Datos de los tutoriales (sincronizados con lanzadera_tutoriales.html) ──
+    var TUTORIALES = [
+      { url: "guia_correo_corporativo.html", icono: "✉️", titulo: "Cómo acceder al correo corporativo @gobiernodecanarias.org", desc: "Activación del buzón, instalación de GobCan Verifica y acceso al correo mediante usuario y contraseña con verificación móvil." },
+      { url: "guia_gobcan_verifica_dispositivo.html", icono: "📱", titulo: "Configurar GobCan Verifica en un nuevo dispositivo", desc: "Cómo migrar la verificación en dos pasos a un nuevo móvil cuando el anterior ya no está disponible." },
+      { url: "guia_correo_avanzado.html", icono: "📧", titulo: "Uso avanzado del correo corporativo", desc: "Cómo utilizar los campos CC y CCO, y cómo personalizar tu firma en el correo @gobiernodecanarias.org." },
+      { url: "guia_evagd.html", icono: "🎓", titulo: "Primeros pasos en EVAGD", desc: "Acceso al entorno virtual de aprendizaje, creación de aulas y gestión básica de contenidos para el profesorado." },
+      { url: "guia_pincel_ekade.html", icono: "📋", titulo: "Pincel Ekade: gestión académica básica", desc: "Pase de lista, calificaciones y comunicación con familias desde la aplicación de gestión académica." },
+      { url: "guia_nube_medusa.html", icono: "☁️", titulo: "Acceso a la nube educativa (Medusa)", desc: "Cómo acceder y utilizar el espacio de almacenamiento y colaboración en la nube del centro." },
+      { url: "guia_blog_profesorado_ecoblog.html", icono: "📝", titulo: "Alta y personalización del blog del profesorado (ecoblog)", desc: "Cómo dar de alta tu blog del profesorado, acceder a él y comenzar a publicar y personalizarlo." },
+      { url: "guia_videoconferencia_jitsi.html", icono: "🎥", titulo: "Videoconferencias con el sistema oficial (Jitsi)", desc: "Cómo unirte a una videollamada y cómo crear una propia en video.canariaseducacion.org." },
+      { url: "guia_wifi_red_medusa.html", icono: "📶", titulo: "Conexión a la wifi corporativa y red Medusa", desc: "Cómo conectarte a la red Medusa y diferencias con Medusa_educativa y Medusa_invitados." },
+      { url: "guia_miclave.html", icono: "🔑", titulo: "Recuperar o cambiar la contraseña corporativa (MiClave)", desc: "Procedimiento para restaurar el acceso a la cuenta del Gobierno de Canarias en caso de bloqueo o caducidad de la contraseña." },
+      { url: "guia_firma_digital_autofirma.html", icono: "✍️", titulo: "Firmar documentos con certificado digital y Autofirma", desc: "Cómo instalar Autofirma y firmar documentos oficiales con tu certificado digital o DNIe." },
+      { url: "guia_sirvete_incidencias.html", icono: "🛠️", titulo: "Cómo abrir una incidencia en Sírvete (CAU_CE)", desc: "Pasos para reportar correctamente un problema técnico y darle seguimiento a través del portal de incidencias." },
+      { url: "guia_pizarras_digitales.html", icono: "🖥️", titulo: "Uso de las pizarras digitales del centro", desc: "Encendido, conexión de dispositivos y resolución de problemas habituales con las pizarras digitales del aula." },
+      { url: "guia_proteccion_datos.html", icono: "🔒", titulo: "Protección de datos y uso responsable de las TIC", desc: "Recomendaciones básicas de RGPD, identidad digital y buenas prácticas en el uso de herramientas digitales del centro." }
+    ];
 
     function normalizar(t) {
       return t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+
+    function renderTutoriales(resultados) {
+      contenedor.innerHTML = '';
+      if (resultados.length === 0) {
+        contenedor.style.display = 'none';
+        document.getElementById('titulo-tutoriales').style.display = 'none';
+        return;
+      }
+      document.getElementById('titulo-tutoriales').style.display = '';
+      contenedor.style.display = '';
+      resultados.forEach(function (t) {
+        var a = document.createElement('a');
+        a.className = 'recurso-card tutorial-result';
+        a.href = t.url;
+        a.innerHTML =
+          '<div class="card-body">' +
+            '<div class="card-icono">' + t.icono + '</div>' +
+            '<div class="card-titulo">' + t.titulo + '</div>' +
+            '<div class="card-desc">' + t.desc + '</div>' +
+          '</div>' +
+          '<div class="card-footer">' +
+            '<span class="card-cta">Ver guía <svg viewBox="0 0 448 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.7 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></svg></span>' +
+            '<span class="card-tag card-tag-tutorial">Tutorial</span>' +
+          '</div>';
+        contenedor.appendChild(a);
+      });
     }
 
     input.addEventListener('input', function () {
       var q = normalizar(input.value.trim());
       var visibles = 0;
 
+      // Filtrar tarjetas del portal
       tarjetas.forEach(function (card) {
         var tituloEl = card.querySelector('.card-titulo');
         var descEl   = card.querySelector('.card-desc');
@@ -778,7 +841,7 @@
         if (ok) visibles++;
       });
 
-      // Ocultar títulos de sección si todos sus hijos están ocultos
+      // Ocultar secciones vacías
       secciones.forEach(function (titulo) {
         var grid = titulo.nextElementSibling;
         while (grid && !grid.classList.contains('recursos-grid')) grid = grid.nextElementSibling;
@@ -789,6 +852,17 @@
         titulo.style.display = hayVisibles || q === '' ? '' : 'none';
         grid.style.display   = hayVisibles || q === '' ? '' : 'none';
       });
+
+      // Filtrar tutoriales
+      if (q === '') {
+        renderTutoriales([]);
+      } else {
+        var matches = TUTORIALES.filter(function (t) {
+          return normalizar(t.titulo + ' ' + t.desc).includes(q);
+        });
+        renderTutoriales(matches);
+        visibles += matches.length;
+      }
 
       sinRes.style.display = visibles === 0 ? 'block' : 'none';
     });
