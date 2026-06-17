@@ -1,6 +1,6 @@
 {
   "name": "Portal TIC · IES Primero de Mayo",
-  "short_name": "Portal TIC",
+  "short_name": "Portal TIC · IES1M",
   "description": "Portal de coordinación TIC para el profesorado del IES Primero de Mayo",
   "start_url": "./index.html",
   "scope": "./",

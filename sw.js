@@ -1,6 +1,6 @@
 // Service Worker · Portal TIC IES Primero de Mayo
 
-const CACHE_VERSION = '2026.06.17:20.02';
+const CACHE_VERSION = '2026.06.17:20.13';
 
 const ARCHIVOS_CACHE = [
   './',
@@ -52,7 +52,6 @@ self.addEventListener('fetch', event => {
                    url.pathname.match(/\.(png|gif|jpg|jpeg|webp|svg)$/i);
 
   if (esImagen) {
-    // Devuelve desde caché si existe y si no descarga y cachea
     event.respondWith(
       caches.match(event.request).then(cached => {
         if (cached) return cached;
@@ -65,7 +64,6 @@ self.addEventListener('fetch', event => {
       })
     );
   } else {
-    // Intenta red y si falla sirve desde caché
     event.respondWith(
       fetch(event.request)
         .then(response => {
