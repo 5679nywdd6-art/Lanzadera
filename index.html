@@ -293,6 +293,7 @@
   }
   .recurso-card.externo::before { background: var(--verde); }
   .recurso-card.urgente::before { background: var(--acento); }
+  .recurso-card.favorito::before { background: #f5a623; }
 
   .card-body {
     padding: 22px 24px 18px;
@@ -338,6 +339,7 @@
   .recurso-card:hover .card-cta svg { transform: translateX(3px); }
   .recurso-card.externo .card-cta { color: var(--verde); }
   .recurso-card.urgente .card-cta { color: var(--acento); }
+  .recurso-card.favorito .card-cta { color: #b5780e; }
   .card-tag {
     font-size: 10.5px;
     font-weight: 600;
@@ -349,6 +351,7 @@
   }
   .recurso-card.externo .card-tag { background: #effaf4; color: var(--verde); }
   .recurso-card.urgente .card-tag { background: #fff2f0; color: var(--acento); }
+  .recurso-card.favorito .card-tag { background: #fdf2dc; color: #b5780e; }
 
   /* ── FOOTER ── */
   footer {
@@ -1000,6 +1003,17 @@
     var tarjetas  = Array.from(document.querySelectorAll('.recurso-card'));
     var contenedor = document.getElementById('resultados-tutoriales');
 
+    // Guardamos el orden original de cada grid para poder restaurarlo
+    // cuando se vacía el campo de búsqueda (el reordenamiento por relevancia
+    // solo debe aplicarse mientras hay una búsqueda activa).
+    // Se excluye #seccionFavoritos: su contenido lo genera dinámicamente
+    // el script de favoritos y no participa en el buscador.
+    var ordenOriginal = new Map();
+    Array.from(document.querySelectorAll('.recursos-grid')).forEach(function (grid) {
+      if (grid.id === 'seccionFavoritos') return;
+      ordenOriginal.set(grid, Array.from(grid.children));
+    });
+
     // ── Datos de los tutoriales (sincronizados con lanzadera_tutoriales.html) ──
     var TUTORIALES = [
       { url: "guia_correo_corporativo.html", icono: "✉️", titulo: "Cómo acceder al correo corporativo @gobiernodecanarias.org", desc: "Activación del buzón, instalación de GobCan Verifica y acceso al correo mediante usuario y contraseña con verificación móvil." },
@@ -1021,6 +1035,59 @@
 
     function normalizar(t) {
       return t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+
+    // ── Distancia de Levenshtein (número mínimo de ediciones para pasar de a a b) ──
+    function levenshtein(a, b) {
+      if (a === b) return 0;
+      if (a.length === 0) return b.length;
+      if (b.length === 0) return a.length;
+      var fila = [];
+      for (var j = 0; j <= b.length; j++) fila[j] = j;
+      for (var i = 1; i <= a.length; i++) {
+        var anterior = fila[0];
+        fila[0] = i;
+        for (j = 1; j <= b.length; j++) {
+          var temp = fila[j];
+          fila[j] = a[i - 1] === b[j - 1]
+            ? anterior
+            : Math.min(anterior, fila[j], fila[j - 1]) + 1;
+          anterior = temp;
+        }
+      }
+      return fila[b.length];
+    }
+
+    // Tolerancia de erratas en función de la longitud de la palabra buscada.
+    // Palabras muy cortas (1-2 letras) no admiten erratas para evitar falsos positivos.
+    function tolerancia(len) {
+      if (len <= 2) return 0;
+      if (len <= 4) return 1;
+      return 2;
+    }
+
+    // Devuelve una puntuación de coincidencia entre el texto buscado (q, ya normalizado,
+    // puede tener varias palabras) y un texto candidato (también normalizado).
+    // 0 = sin coincidencia · 2 = coincidencia exacta (substring) · 1 = coincidencia aproximada
+    function puntuarCoincidencia(q, texto) {
+      if (q === '') return 0;
+      if (texto.includes(q)) return 2;
+
+      // Coincidencia aproximada: cada palabra de la búsqueda debe acercarse
+      // (Levenshtein dentro de tolerancia) a alguna palabra del texto candidato.
+      var palabrasTexto = texto.split(/\s+/).filter(Boolean);
+      var palabrasQuery = q.split(/\s+/).filter(Boolean);
+
+      var todasAproximadas = palabrasQuery.every(function (pq) {
+        var tol = tolerancia(pq.length);
+        if (tol === 0) return texto.includes(pq);
+        return palabrasTexto.some(function (pt) {
+          if (pt.includes(pq) || pq.includes(pt)) return true;
+          return levenshtein(pq, pt) <= tol;
+        });
+      });
+
+      return todasAproximadas ? 1 : 0;
     }
 
     function renderTutoriales(resultados) {
@@ -1054,15 +1121,49 @@
       var q = normalizar(input.value.trim());
       var visibles = 0;
 
-      // Filtrar tarjetas del portal
-      tarjetas.forEach(function (card) {
+      // Filtrar y puntuar tarjetas del portal
+      var tarjetasPuntuadas = tarjetas.map(function (card) {
         var tituloEl = card.querySelector('.card-titulo');
         var descEl   = card.querySelector('.card-desc');
         var texto    = normalizar((tituloEl ? tituloEl.textContent : '') + ' ' + (descEl ? descEl.textContent : ''));
-        var ok = q === '' || texto.includes(q);
-        card.style.display = ok ? '' : 'none';
-        if (ok) visibles++;
+        var score    = q === '' ? -1 : puntuarCoincidencia(q, texto);
+        return { card: card, score: score };
       });
+
+      // Mostrar/ocultar y reordenar dentro de cada grid según score (exactas primero)
+      var gridsAfectados = new Set();
+      tarjetasPuntuadas.forEach(function (item) {
+        var ok = q === '' || item.score > 0;
+        item.card.style.display = ok ? '' : 'none';
+        if (ok && q !== '') {
+          visibles++;
+          var grid = item.card.parentElement;
+          // #seccionFavoritos no participa en el buscador: su contenido lo gestiona
+          // exclusivamente el script de favoritos.
+          if (grid && grid.classList.contains('recursos-grid') && grid.id !== 'seccionFavoritos') {
+            gridsAfectados.add(grid);
+          }
+        } else if (ok) {
+          visibles++;
+        }
+      });
+
+      if (q === '') {
+        // Sin búsqueda activa: restaurar el orden original de cada grid.
+        ordenOriginal.forEach(function (hijosOriginales, grid) {
+          hijosOriginales.forEach(function (el) { grid.appendChild(el); });
+        });
+      } else {
+        gridsAfectados.forEach(function (grid) {
+          var hijos = Array.from(grid.children).filter(function (c) { return c.classList.contains('recurso-card'); });
+          var conScore = hijos.map(function (c) {
+            var t = tarjetasPuntuadas.filter(function (x) { return x.card === c; })[0];
+            return { el: c, score: t ? t.score : 0 };
+          }).filter(function (x) { return x.score > 0; });
+          conScore.sort(function (a, b) { return b.score - a.score; });
+          conScore.forEach(function (x) { grid.appendChild(x.el); });
+        });
+      }
 
       // Ocultar secciones vacías
       secciones.forEach(function (titulo) {
@@ -1076,13 +1177,18 @@
         grid.style.display   = hayVisibles || q === '' ? '' : 'none';
       });
 
-      // Filtrar tutoriales
+      // Filtrar y ordenar tutoriales (exactos primero, aproximados después)
       if (q === '') {
         renderTutoriales([]);
       } else {
-        var matches = TUTORIALES.filter(function (t) {
-          return normalizar(t.titulo + ' ' + t.desc).includes(q);
-        });
+        var matches = TUTORIALES
+          .map(function (t) {
+            var score = puntuarCoincidencia(q, normalizar(t.titulo + ' ' + t.desc));
+            return { t: t, score: score };
+          })
+          .filter(function (x) { return x.score > 0; })
+          .sort(function (a, b) { return b.score - a.score; })
+          .map(function (x) { return x.t; });
         renderTutoriales(matches);
         visibles += matches.length;
       }
@@ -1165,13 +1271,15 @@
         var datos = RECURSOS_FAV.filter(function (r) { return r.id === id; })[0];
         if (!datos) return; // favorito guardado de una tarjeta que ya no existe
         var a = document.createElement('a');
-        a.className = 'recurso-card';
+        a.className = 'recurso-card favorito';
         a.href = datos.href;
+        a.setAttribute('data-fav-id', datos.id);
         if (/^https?:\/\//.test(datos.href)) {
           a.target = '_blank';
           a.rel = 'noopener noreferrer';
         }
         a.innerHTML =
+          '<button type="button" class="btn-favorito" data-fav-target="' + datos.id + '" aria-pressed="true" aria-label="Quitar de accesos rápidos" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorito(this);"><svg viewBox="0 0 576 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3L288.1 439.8 415.1 508.3c10.8 5.7 23.9 4.7 33.8-2.3s14.9-19.3 12.9-31.3L437.2 329 541.4 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></button>' +
           '<div class="card-body">' +
             '<div class="card-icono">' + datos.icono + '</div>' +
             '<div class="card-titulo">' + datos.titulo + '</div>' +
