@@ -377,7 +377,7 @@
   }
   html[data-theme="dark"] .card-tag-tutorial { filter: brightness(0.6) saturate(0.85); }
 
-  /* ── BOTÓN FAVORITO (solo visible en PWA instalada + móvil) ── */
+  /* ── BOTÓN FAVORITO (visible siempre, en navegador y en PWA instalada) ── */
   .btn-favorito {
     display: none;
     position: absolute;
@@ -418,13 +418,6 @@
   body.modo-favoritos.hay-favoritos #seccionFavoritos { display: block; }
   #seccionFavoritos.recursos-grid { display: none; }
   body.modo-favoritos.hay-favoritos #seccionFavoritos.recursos-grid { display: grid; }
-  .favorito-hint {
-    margin: -8px 60px 16px;
-    font-size: 12px;
-    color: var(--texto-sec);
-    display: none;
-  }
-  body.modo-favoritos:not(.hay-favoritos) .favorito-hint { display: block; }
 
 
   .recurso-card.en-construccion {
@@ -627,7 +620,6 @@
 <!-- TUS ACCESOS RÁPIDOS (favoritos, solo PWA instalada en móvil) -->
 <div class="seccion-titulo" id="tituloFavoritos">⭐ Tus accesos rápidos</div>
 <div class="recursos-grid" id="seccionFavoritos"></div>
-<div class="favorito-hint">Toca la ⭐ de cualquier tarjeta para añadirla aquí.</div>
 
 <!-- RESULTADOS DE TUTORIALES (solo visibles al buscar) -->
 <div class="seccion-titulo" id="titulo-tutoriales" style="display:none;">Tutoriales encontrados</div>
@@ -1131,16 +1123,10 @@
 </script>
 
 <script>
-  // ── FAVORITOS: detección PWA instalada + móvil, gestión y render ──
+  // ── FAVORITOS: gestión y render (activo en cualquier contexto) ──
   (function () {
     var STORAGE_KEY = 'tic-favoritos';
 
-    var esStandalone = window.matchMedia('(display-mode: standalone)').matches
-      || window.navigator.standalone === true;
-    var esMovil = window.matchMedia('(max-width: 900px)').matches;
-    var modoFavoritos = esStandalone && esMovil;
-
-    if (!modoFavoritos) return;
     document.body.classList.add('modo-favoritos');
 
     function leerFavoritos() {
