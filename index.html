@@ -377,6 +377,55 @@
   }
   html[data-theme="dark"] .card-tag-tutorial { filter: brightness(0.6) saturate(0.85); }
 
+  /* ── BOTÓN FAVORITO (solo visible en PWA instalada + móvil) ── */
+  .btn-favorito {
+    display: none;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.92);
+    color: var(--gris-borde);
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 5;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    transition: transform 0.15s ease, color 0.15s ease, background 0.15s ease;
+  }
+  html[data-theme="dark"] .btn-favorito,
+  html[data-theme="contrast"] .btn-favorito {
+    background: rgba(20,22,30,0.85);
+  }
+  body.modo-favoritos .btn-favorito { display: flex; }
+  .btn-favorito svg { width: 17px; height: 17px; }
+  .btn-favorito:active { transform: scale(0.88); }
+  .btn-favorito[aria-pressed="true"] {
+    color: #f5a623;
+  }
+  .btn-favorito:focus-visible {
+    outline: 2px solid var(--azul-medio);
+    outline-offset: 2px;
+  }
+
+  /* ── SECCIÓN: TUS ACCESOS RÁPIDOS ── */
+  #tituloFavoritos,
+  #seccionFavoritos { display: none; }
+  body.modo-favoritos.hay-favoritos #tituloFavoritos,
+  body.modo-favoritos.hay-favoritos #seccionFavoritos { display: block; }
+  #seccionFavoritos.recursos-grid { display: none; }
+  body.modo-favoritos.hay-favoritos #seccionFavoritos.recursos-grid { display: grid; }
+  .favorito-hint {
+    margin: -8px 60px 16px;
+    font-size: 12px;
+    color: var(--texto-sec);
+    display: none;
+  }
+  body.modo-favoritos:not(.hay-favoritos) .favorito-hint { display: block; }
+
 
   .recurso-card.en-construccion {
     opacity: 0.6;
@@ -575,6 +624,11 @@
 
 <div class="sin-resultados" id="sinResultados">No se encontraron recursos que coincidan con tu búsqueda.</div>
 
+<!-- TUS ACCESOS RÁPIDOS (favoritos, solo PWA instalada en móvil) -->
+<div class="seccion-titulo" id="tituloFavoritos">⭐ Tus accesos rápidos</div>
+<div class="recursos-grid" id="seccionFavoritos"></div>
+<div class="favorito-hint">Toca la ⭐ de cualquier tarjeta para añadirla aquí.</div>
+
 <!-- RESULTADOS DE TUTORIALES (solo visibles al buscar) -->
 <div class="seccion-titulo" id="titulo-tutoriales" style="display:none;">Tutoriales encontrados</div>
 <div class="recursos-grid" id="resultados-tutoriales" style="display:none;"></div>
@@ -585,7 +639,8 @@
 <div class="recursos-grid" id="recursosGrid">
 
   <!-- TUTORIALES TIC -->
-  <a class="recurso-card" href="lanzadera_tutoriales.html">
+  <a class="recurso-card" href="lanzadera_tutoriales.html" data-fav-id="guias-y-tutoriales-tic">
+    <button type="button" class="btn-favorito" data-fav-target="guias-y-tutoriales-tic" aria-pressed="false" aria-label="Marcar como favorito" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorito(this);"><svg viewBox="0 0 576 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3L288.1 439.8 415.1 508.3c10.8 5.7 23.9 4.7 33.8-2.3s14.9-19.3 12.9-31.3L437.2 329 541.4 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></button>
     <div class="card-body">
       <div class="card-icono">📚</div>
       <div class="card-titulo">Guías y tutoriales TIC</div>
@@ -622,7 +677,8 @@
 <div class="recursos-grid">
 
   <!-- NOTIFICAR AUSENCIA -->
-  <a class="recurso-card urgente" href="https://www3.gobiernodecanarias.org/medusa/edublog/iesprimerodemayo/formulario-de-notificacion-de-ausencias-del-profesorado/" target="_blank" rel="noopener noreferrer">
+  <a class="recurso-card urgente" href="https://www3.gobiernodecanarias.org/medusa/edublog/iesprimerodemayo/formulario-de-notificacion-de-ausencias-del-profesorado/" target="_blank" rel="noopener noreferrer" data-fav-id="notificar-ausencia">
+    <button type="button" class="btn-favorito" data-fav-target="notificar-ausencia" aria-pressed="false" aria-label="Marcar como favorito" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorito(this);"><svg viewBox="0 0 576 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3L288.1 439.8 415.1 508.3c10.8 5.7 23.9 4.7 33.8-2.3s14.9-19.3 12.9-31.3L437.2 329 541.4 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></button>
     <div class="card-body">
       <div class="card-icono">📋</div>
       <div class="card-titulo">Notificar ausencia</div>
@@ -635,7 +691,8 @@
   </a>
 
   <!-- ABRIR INCIDENCIA INFORMÁTICA -->
-  <a class="recurso-card urgente" href="https://forms.office.com/Pages/ResponsePage.aspx?id=j23KBp8Lq0avzvw-kqU6HHADq9uASOxBhKH6rpmny4JUOUo2UU1OWjIxRkRKUlZQMlJIRU9QMVpBWC4u&qrcode=true" target="_blank" rel="noopener noreferrer">
+  <a class="recurso-card urgente" href="https://forms.office.com/Pages/ResponsePage.aspx?id=j23KBp8Lq0avzvw-kqU6HHADq9uASOxBhKH6rpmny4JUOUo2UU1OWjIxRkRKUlZQMlJIRU9QMVpBWC4u&qrcode=true" target="_blank" rel="noopener noreferrer" data-fav-id="abrir-incidencias-informaticas">
+    <button type="button" class="btn-favorito" data-fav-target="abrir-incidencias-informaticas" aria-pressed="false" aria-label="Marcar como favorito" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorito(this);"><svg viewBox="0 0 576 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3L288.1 439.8 415.1 508.3c10.8 5.7 23.9 4.7 33.8-2.3s14.9-19.3 12.9-31.3L437.2 329 541.4 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></button>
     <div class="card-body">
       <div class="card-icono">🖥️</div>
       <div class="card-titulo">Abrir incidencias informáticas</div>
@@ -655,7 +712,8 @@
 <div class="recursos-grid">
 
   <!-- CORREO CORPORATIVO -->
-  <a class="recurso-card externo" href="https://ecorreo.gobiernodecanarias.org" target="_blank" rel="noopener noreferrer">
+  <a class="recurso-card externo" href="https://ecorreo.gobiernodecanarias.org" target="_blank" rel="noopener noreferrer" data-fav-id="correo-corporativo">
+    <button type="button" class="btn-favorito" data-fav-target="correo-corporativo" aria-pressed="false" aria-label="Marcar como favorito" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorito(this);"><svg viewBox="0 0 576 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3L288.1 439.8 415.1 508.3c10.8 5.7 23.9 4.7 33.8-2.3s14.9-19.3 12.9-31.3L437.2 329 541.4 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></button>
     <div class="card-body">
       <div class="card-icono">✉️</div>
       <div class="card-titulo">Correo corporativo</div>
@@ -668,7 +726,8 @@
   </a>
 
   <!-- ESCRITORIO DE CENTRO -->
-  <a class="recurso-card externo" href="https://www.gobiernodecanarias.net/educacion/loginportal/" target="_blank" rel="noopener noreferrer">
+  <a class="recurso-card externo" href="https://www.gobiernodecanarias.net/educacion/loginportal/" target="_blank" rel="noopener noreferrer" data-fav-id="escritorio-de-centro">
+    <button type="button" class="btn-favorito" data-fav-target="escritorio-de-centro" aria-pressed="false" aria-label="Marcar como favorito" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorito(this);"><svg viewBox="0 0 576 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3L288.1 439.8 415.1 508.3c10.8 5.7 23.9 4.7 33.8-2.3s14.9-19.3 12.9-31.3L437.2 329 541.4 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></button>
     <div class="card-body">
       <div class="card-icono">🖥️</div>
       <div class="card-titulo">Escritorio de centro</div>
@@ -681,7 +740,8 @@
   </a>
 
   <!-- EXPEDIENTE PERSONAL -->
-  <a class="recurso-card externo" href="https://www3.gobiernodecanarias.org/educacion/cau_ce/cas/login?service=https%3a%2f%2fwww.gobiernodecanarias.org%2feducacion%2fsinfo%2fcasclientsua%2f" target="_blank" rel="noopener noreferrer">
+  <a class="recurso-card externo" href="https://www3.gobiernodecanarias.org/educacion/cau_ce/cas/login?service=https%3a%2f%2fwww.gobiernodecanarias.org%2feducacion%2fsinfo%2fcasclientsua%2f" target="_blank" rel="noopener noreferrer" data-fav-id="expediente-personal">
+    <button type="button" class="btn-favorito" data-fav-target="expediente-personal" aria-pressed="false" aria-label="Marcar como favorito" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorito(this);"><svg viewBox="0 0 576 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3L288.1 439.8 415.1 508.3c10.8 5.7 23.9 4.7 33.8-2.3s14.9-19.3 12.9-31.3L437.2 329 541.4 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></button>
     <div class="card-body">
       <div class="card-icono">📁</div>
       <div class="card-titulo">Expediente personal</div>
@@ -693,8 +753,23 @@
     </div>
   </a>
 
+  <!-- CONSOLA DE SERVICIOS CAU_CE -->
+  <a class="recurso-card externo" href="https://www3.gobiernodecanarias.org/educacion/cau_ce/cas/login?service=https%3A//www3.gobiernodecanarias.org/educacion/cau_ce/servicios/casservice%3Fdestination%3D/educacion/cau_ce/servicios/" target="_blank" rel="noopener noreferrer" data-fav-id="consola-de-servicios-cau-ce">
+    <button type="button" class="btn-favorito" data-fav-target="consola-de-servicios-cau-ce" aria-pressed="false" aria-label="Marcar como favorito" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorito(this);"><svg viewBox="0 0 576 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3L288.1 439.8 415.1 508.3c10.8 5.7 23.9 4.7 33.8-2.3s14.9-19.3 12.9-31.3L437.2 329 541.4 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></button>
+    <div class="card-body">
+      <div class="card-icono">🛠️</div>
+      <div class="card-titulo">Consola de Servicios CAU_CE</div>
+      <div class="card-desc">Catálogo de servicios y solicitudes de la Consejería de Educación: incidencias técnicas, herramientas web y otros trámites del centro.</div>
+    </div>
+    <div class="card-footer">
+      <span class="card-cta">Abrir consola <svg viewBox="0 0 512 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z"/></svg></span>
+      <span class="card-tag">Abre en nueva pestaña</span>
+    </div>
+  </a>
+
   <!-- VIDEOCONFERENCIA JITSI -->
-  <a class="recurso-card externo" href="https://video.canariaseducacion.org" target="_blank" rel="noopener noreferrer">
+  <a class="recurso-card externo" href="https://video.canariaseducacion.org" target="_blank" rel="noopener noreferrer" data-fav-id="videoconferencia-jitsi">
+    <button type="button" class="btn-favorito" data-fav-target="videoconferencia-jitsi" aria-pressed="false" aria-label="Marcar como favorito" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorito(this);"><svg viewBox="0 0 576 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3L288.1 439.8 415.1 508.3c10.8 5.7 23.9 4.7 33.8-2.3s14.9-19.3 12.9-31.3L437.2 329 541.4 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></button>
     <div class="card-body">
       <div class="card-icono">🎥</div>
       <div class="card-titulo">Videoconferencia Jitsi</div>
@@ -707,7 +782,8 @@
   </a>
 
   <!-- NUBE MEDUSA -->
-  <a class="recurso-card externo" href="https://nube.canariaseducacion.org" target="_blank" rel="noopener noreferrer">
+  <a class="recurso-card externo" href="https://nube.canariaseducacion.org" target="_blank" rel="noopener noreferrer" data-fav-id="nube-medusa">
+    <button type="button" class="btn-favorito" data-fav-target="nube-medusa" aria-pressed="false" aria-label="Marcar como favorito" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorito(this);"><svg viewBox="0 0 576 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3L288.1 439.8 415.1 508.3c10.8 5.7 23.9 4.7 33.8-2.3s14.9-19.3 12.9-31.3L437.2 329 541.4 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></button>
     <div class="card-body">
       <div class="card-icono">☁️</div>
       <div class="card-titulo">Nube Medusa</div>
@@ -715,6 +791,160 @@
     </div>
     <div class="card-footer">
       <span class="card-cta">Abrir Nube Medusa <svg viewBox="0 0 512 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z"/></svg></span>
+      <span class="card-tag">Abre en nueva pestaña</span>
+    </div>
+  </a>
+
+  <!-- SERVICIO DE PERFECCIONAMIENTO DEL PROFESORADO -->
+  <a class="recurso-card externo" href="https://www3.gobiernodecanarias.org/medusa/ecoescuela/perfeccionamiento/" target="_blank" rel="noopener noreferrer" data-fav-id="servicio-de-perfeccionamiento-del-profesorado">
+    <button type="button" class="btn-favorito" data-fav-target="servicio-de-perfeccionamiento-del-profesorado" aria-pressed="false" aria-label="Marcar como favorito" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorito(this);"><svg viewBox="0 0 576 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3L288.1 439.8 415.1 508.3c10.8 5.7 23.9 4.7 33.8-2.3s14.9-19.3 12.9-31.3L437.2 329 541.4 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></button>
+    <div class="card-body">
+      <div class="card-icono">🎓</div>
+      <div class="card-titulo">Servicio de Perfeccionamiento del Profesorado</div>
+      <div class="card-desc">Portal de formación permanente del profesorado: cursos, certificaciones y recursos de actualización docente.</div>
+    </div>
+    <div class="card-footer">
+      <span class="card-cta">Abrir portal <svg viewBox="0 0 512 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z"/></svg></span>
+      <span class="card-tag">Abre en nueva pestaña</span>
+    </div>
+  </a>
+
+  <!-- ABIES WEB -->
+  <a class="recurso-card externo" href="https://www3.gobiernodecanarias.org/educacion/cau_ce/abiesweb/web/index.php/visitas/preHomePublica" target="_blank" rel="noopener noreferrer" data-fav-id="abies-web">
+    <button type="button" class="btn-favorito" data-fav-target="abies-web" aria-pressed="false" aria-label="Marcar como favorito" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorito(this);"><svg viewBox="0 0 576 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3L288.1 439.8 415.1 508.3c10.8 5.7 23.9 4.7 33.8-2.3s14.9-19.3 12.9-31.3L437.2 329 541.4 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></button>
+    <div class="card-body">
+      <div class="card-icono">📖</div>
+      <div class="card-titulo">Abies Web</div>
+      <div class="card-desc">Catálogo en línea de la biblioteca del centro: consulta de fondos bibliográficos y gestión de préstamos.</div>
+    </div>
+    <div class="card-footer">
+      <span class="card-cta">Abrir Abies Web <svg viewBox="0 0 512 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z"/></svg></span>
+      <span class="card-tag">Abre en nueva pestaña</span>
+    </div>
+  </a>
+
+  <!-- RESERVA DE AULAS Y CARROS -->
+  <a class="recurso-card externo" href="https://www3.gobiernodecanarias.org/educacion/cau_ce/reservas/35009383/" target="_blank" rel="noopener noreferrer" data-fav-id="reserva-de-aulas-y-carros">
+    <button type="button" class="btn-favorito" data-fav-target="reserva-de-aulas-y-carros" aria-pressed="false" aria-label="Marcar como favorito" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorito(this);"><svg viewBox="0 0 576 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3L288.1 439.8 415.1 508.3c10.8 5.7 23.9 4.7 33.8-2.3s14.9-19.3 12.9-31.3L437.2 329 541.4 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></button>
+    <div class="card-body">
+      <div class="card-icono">🗂️</div>
+      <div class="card-titulo">Reserva de aulas y carros</div>
+      <div class="card-desc">Sistema de reserva de espacios y recursos compartidos del centro: aulas específicas y carros de dispositivos móviles.</div>
+    </div>
+    <div class="card-footer">
+      <span class="card-cta">Abrir reservas <svg viewBox="0 0 512 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z"/></svg></span>
+      <span class="card-tag">Abre en nueva pestaña</span>
+    </div>
+  </a>
+
+  <!-- GDCAN -->
+  <a class="recurso-card externo" href="https://www.gdcan.org/area-usuario/login" target="_blank" rel="noopener noreferrer" data-fav-id="gdcan">
+    <button type="button" class="btn-favorito" data-fav-target="gdcan" aria-pressed="false" aria-label="Marcar como favorito" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorito(this);"><svg viewBox="0 0 576 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3L288.1 439.8 415.1 508.3c10.8 5.7 23.9 4.7 33.8-2.3s14.9-19.3 12.9-31.3L437.2 329 541.4 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></button>
+    <div class="card-body">
+      <div class="card-icono">🔐</div>
+      <div class="card-titulo">GDCan</div>
+      <div class="card-desc">Área de usuario de GDCan, plataforma de gestión documental y trámites asociados del centro.</div>
+    </div>
+    <div class="card-footer">
+      <span class="card-cta">Abrir GDCan <svg viewBox="0 0 512 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z"/></svg></span>
+      <span class="card-tag">Abre en nueva pestaña</span>
+    </div>
+  </a>
+
+  <!-- PINCEL EKADE WEB -->
+  <a class="recurso-card externo" href="https://www.gobiernodecanarias.org/educacion/9/pekweb/ekade" target="_blank" rel="noopener noreferrer" data-fav-id="pincel-ekade-web">
+    <button type="button" class="btn-favorito" data-fav-target="pincel-ekade-web" aria-pressed="false" aria-label="Marcar como favorito" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorito(this);"><svg viewBox="0 0 576 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3L288.1 439.8 415.1 508.3c10.8 5.7 23.9 4.7 33.8-2.3s14.9-19.3 12.9-31.3L437.2 329 541.4 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></button>
+    <div class="card-body">
+      <div class="card-icono">📋</div>
+      <div class="card-titulo">Pincel Ekade Web</div>
+      <div class="card-desc">Acceso directo a la plataforma de gestión académica Pincel Ekade en su versión web.</div>
+    </div>
+    <div class="card-footer">
+      <span class="card-cta">Abrir Pincel Ekade <svg viewBox="0 0 512 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z"/></svg></span>
+      <span class="card-tag">Abre en nueva pestaña</span>
+    </div>
+  </a>
+
+  <!-- PINCEL EKADE MÓVIL -->
+  <a class="recurso-card externo" href="https://www.gobiernodecanarias.org/educacion/9/PEKWEB/ekade/movil" target="_blank" rel="noopener noreferrer" data-fav-id="pincel-ekade-movil">
+    <button type="button" class="btn-favorito" data-fav-target="pincel-ekade-movil" aria-pressed="false" aria-label="Marcar como favorito" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorito(this);"><svg viewBox="0 0 576 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3L288.1 439.8 415.1 508.3c10.8 5.7 23.9 4.7 33.8-2.3s14.9-19.3 12.9-31.3L437.2 329 541.4 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></button>
+    <div class="card-body">
+      <div class="card-icono">📱</div>
+      <div class="card-titulo">Pincel Ekade Móvil</div>
+      <div class="card-desc">Versión optimizada para dispositivos móviles de la plataforma de gestión académica Pincel Ekade.</div>
+    </div>
+    <div class="card-footer">
+      <span class="card-cta">Abrir versión móvil <svg viewBox="0 0 512 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z"/></svg></span>
+      <span class="card-tag">Abre en nueva pestaña</span>
+    </div>
+  </a>
+
+  <!-- EVAGD -->
+  <a class="recurso-card externo" href="https://www3.gobiernodecanarias.org/educacion/cau_ce/cas/login?service=https://www3.gobiernodecanarias.org/medusa/evagd/laspalmas/login/index.php?authCAS=CAS" target="_blank" rel="noopener noreferrer" data-fav-id="evagd">
+    <button type="button" class="btn-favorito" data-fav-target="evagd" aria-pressed="false" aria-label="Marcar como favorito" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorito(this);"><svg viewBox="0 0 576 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3L288.1 439.8 415.1 508.3c10.8 5.7 23.9 4.7 33.8-2.3s14.9-19.3 12.9-31.3L437.2 329 541.4 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></button>
+    <div class="card-body">
+      <div class="card-icono">🏫</div>
+      <div class="card-titulo">EVAGD</div>
+      <div class="card-desc">Acceso directo al entorno virtual de aprendizaje de Gran Canaria y La Palma.</div>
+    </div>
+    <div class="card-footer">
+      <span class="card-cta">Abrir EVAGD <svg viewBox="0 0 512 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z"/></svg></span>
+      <span class="card-tag">Abre en nueva pestaña</span>
+    </div>
+  </a>
+
+  <!-- CAMPUS -->
+  <a class="recurso-card externo" href="https://www3.gobiernodecanarias.org/educacion/cau_ce/cas/login?service=http://www3.gobiernodecanarias.org/medusa/eforma/campus/login/index.php" target="_blank" rel="noopener noreferrer" data-fav-id="campus">
+    <button type="button" class="btn-favorito" data-fav-target="campus" aria-pressed="false" aria-label="Marcar como favorito" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorito(this);"><svg viewBox="0 0 576 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3L288.1 439.8 415.1 508.3c10.8 5.7 23.9 4.7 33.8-2.3s14.9-19.3 12.9-31.3L437.2 329 541.4 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></button>
+    <div class="card-body">
+      <div class="card-icono">🖥️</div>
+      <div class="card-titulo">CAMPUS</div>
+      <div class="card-desc">Plataforma de formación a distancia del profesorado (eForma) de la Consejería de Educación.</div>
+    </div>
+    <div class="card-footer">
+      <span class="card-cta">Abrir CAMPUS <svg viewBox="0 0 512 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z"/></svg></span>
+      <span class="card-tag">Abre en nueva pestaña</span>
+    </div>
+  </a>
+
+  <!-- BLOG DE CENTRO IES PRIMERO DE MAYO -->
+  <a class="recurso-card externo" href="https://www3.gobiernodecanarias.org/medusa/edublog/iesprimerodemayo/" target="_blank" rel="noopener noreferrer" data-fav-id="blog-de-centro-ies-primero-de-mayo">
+    <button type="button" class="btn-favorito" data-fav-target="blog-de-centro-ies-primero-de-mayo" aria-pressed="false" aria-label="Marcar como favorito" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorito(this);"><svg viewBox="0 0 576 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3L288.1 439.8 415.1 508.3c10.8 5.7 23.9 4.7 33.8-2.3s14.9-19.3 12.9-31.3L437.2 329 541.4 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></button>
+    <div class="card-body">
+      <div class="card-icono">📰</div>
+      <div class="card-titulo">Blog de centro IES Primero de Mayo</div>
+      <div class="card-desc">Blog institucional del centro: noticias, actividades y comunicaciones oficiales del IES Primero de Mayo.</div>
+    </div>
+    <div class="card-footer">
+      <span class="card-cta">Abrir blog de centro <svg viewBox="0 0 512 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z"/></svg></span>
+      <span class="card-tag">Abre en nueva pestaña</span>
+    </div>
+  </a>
+
+  <!-- PORTAL DE LA CONSEJERÍA -->
+  <a class="recurso-card externo" href="https://www.gobiernodecanarias.org/educacion/web/" target="_blank" rel="noopener noreferrer" data-fav-id="portal-de-la-consejeria">
+    <button type="button" class="btn-favorito" data-fav-target="portal-de-la-consejeria" aria-pressed="false" aria-label="Marcar como favorito" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorito(this);"><svg viewBox="0 0 576 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3L288.1 439.8 415.1 508.3c10.8 5.7 23.9 4.7 33.8-2.3s14.9-19.3 12.9-31.3L437.2 329 541.4 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></button>
+    <div class="card-body">
+      <div class="card-icono">🏛️</div>
+      <div class="card-titulo">Portal de la Consejería</div>
+      <div class="card-desc">Sitio web institucional de la Consejería de Educación, Formación Profesional, Actividades Físicas y Deportes del Gobierno de Canarias.</div>
+    </div>
+    <div class="card-footer">
+      <span class="card-cta">Abrir portal <svg viewBox="0 0 512 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z"/></svg></span>
+      <span class="card-tag">Abre en nueva pestaña</span>
+    </div>
+  </a>
+
+  <!-- CALENDARIO ESCOLAR 26-27 -->
+  <a class="recurso-card externo" href="https://www.gobiernodecanarias.org/educacion/web/centros/calendario_escolar/" target="_blank" rel="noopener noreferrer" data-fav-id="calendario-escolar-26-27">
+    <button type="button" class="btn-favorito" data-fav-target="calendario-escolar-26-27" aria-pressed="false" aria-label="Marcar como favorito" onclick="event.preventDefault(); event.stopPropagation(); toggleFavorito(this);"><svg viewBox="0 0 576 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3L288.1 439.8 415.1 508.3c10.8 5.7 23.9 4.7 33.8-2.3s14.9-19.3 12.9-31.3L437.2 329 541.4 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></button>
+    <div class="card-body">
+      <div class="card-icono">📅</div>
+      <div class="card-titulo">Calendario escolar 26-27</div>
+      <div class="card-desc">Calendario escolar oficial del curso 2026-2027 publicado por la Consejería de Educación de Canarias.</div>
+    </div>
+    <div class="card-footer">
+      <span class="card-cta">Ver calendario <svg viewBox="0 0 512 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z"/></svg></span>
       <span class="card-tag">Abre en nueva pestaña</span>
     </div>
   </a>
@@ -785,6 +1015,7 @@
       { url: "guia_correo_avanzado.html", icono: "📧", titulo: "Uso avanzado del correo corporativo", desc: "Cómo utilizar los campos CC y CCO, y cómo personalizar tu firma en el correo @gobiernodecanarias.org." },
       { url: "guia_evagd.html", icono: "🎓", titulo: "Primeros pasos en EVAGD", desc: "Acceso al entorno virtual de aprendizaje, creación de aulas y gestión básica de contenidos para el profesorado." },
       { url: "guia_pincel_ekade.html", icono: "📋", titulo: "Pincel Ekade: gestión académica básica", desc: "Pase de lista, calificaciones y comunicación con familias desde la aplicación de gestión académica." },
+      { url: "guia_faltas_pincel_ekade.html", icono: "🗓️", titulo: "Seguimiento de faltas de asistencia en Pincel Ekade", desc: "Cómo registrar faltas en cada sesión lectiva, justificarlas y consultar el historial de asistencia del alumnado." },
       { url: "guia_nube_medusa.html", icono: "☁️", titulo: "Acceso a la nube educativa (Medusa)", desc: "Cómo acceder y utilizar el espacio de almacenamiento y colaboración en la nube del centro." },
       { url: "guia_blog_profesorado_ecoblog.html", icono: "📝", titulo: "Alta y personalización del blog del profesorado (ecoblog)", desc: "Cómo dar de alta tu blog del profesorado, acceder a él y comenzar a publicar y personalizarlo." },
       { url: "guia_videoconferencia_jitsi.html", icono: "🎥", titulo: "Videoconferencias con el sistema oficial (Jitsi)", desc: "Cómo unirte a una videollamada y cómo crear una propia en video.canariaseducacion.org." },
@@ -891,6 +1122,99 @@
         }).catch(function () {});
       }
     });
+  })();
+</script>
+
+<script>
+  // ── FAVORITOS: registro de tarjetas referenciables por data-fav-id ──
+  var RECURSOS_FAV = [{"id": "guias-y-tutoriales-tic", "icono": "📚", "titulo": "Guías y tutoriales TIC", "href": "lanzadera_tutoriales.html"}, {"id": "notificar-ausencia", "icono": "📋", "titulo": "Notificar ausencia", "href": "https://www3.gobiernodecanarias.org/medusa/edublog/iesprimerodemayo/formulario-de-notificacion-de-ausencias-del-profesorado/"}, {"id": "abrir-incidencias-informaticas", "icono": "🖥️", "titulo": "Abrir incidencias informáticas", "href": "https://forms.office.com/Pages/ResponsePage.aspx?id=j23KBp8Lq0avzvw-kqU6HHADq9uASOxBhKH6rpmny4JUOUo2UU1OWjIxRkRKUlZQMlJIRU9QMVpBWC4u&qrcode=true"}, {"id": "correo-corporativo", "icono": "✉️", "titulo": "Correo corporativo", "href": "https://ecorreo.gobiernodecanarias.org"}, {"id": "escritorio-de-centro", "icono": "🖥️", "titulo": "Escritorio de centro", "href": "https://www.gobiernodecanarias.net/educacion/loginportal/"}, {"id": "expediente-personal", "icono": "📁", "titulo": "Expediente personal", "href": "https://www3.gobiernodecanarias.org/educacion/cau_ce/cas/login?service=https%3a%2f%2fwww.gobiernodecanarias.org%2feducacion%2fsinfo%2fcasclientsua%2f"}, {"id": "consola-de-servicios-cau-ce", "icono": "🛠️", "titulo": "Consola de Servicios CAU_CE", "href": "https://www3.gobiernodecanarias.org/educacion/cau_ce/cas/login?service=https%3A//www3.gobiernodecanarias.org/educacion/cau_ce/servicios/casservice%3Fdestination%3D/educacion/cau_ce/servicios/"}, {"id": "videoconferencia-jitsi", "icono": "🎥", "titulo": "Videoconferencia Jitsi", "href": "https://video.canariaseducacion.org"}, {"id": "nube-medusa", "icono": "☁️", "titulo": "Nube Medusa", "href": "https://nube.canariaseducacion.org"}, {"id": "servicio-de-perfeccionamiento-del-profesorado", "icono": "🎓", "titulo": "Servicio de Perfeccionamiento del Profesorado", "href": "https://www3.gobiernodecanarias.org/medusa/ecoescuela/perfeccionamiento/"}, {"id": "abies-web", "icono": "📖", "titulo": "Abies Web", "href": "https://www3.gobiernodecanarias.org/educacion/cau_ce/abiesweb/web/index.php/visitas/preHomePublica"}, {"id": "reserva-de-aulas-y-carros", "icono": "🗂️", "titulo": "Reserva de aulas y carros", "href": "https://www3.gobiernodecanarias.org/educacion/cau_ce/reservas/35009383/"}, {"id": "gdcan", "icono": "🔐", "titulo": "GDCan", "href": "https://www.gdcan.org/area-usuario/login"}, {"id": "pincel-ekade-web", "icono": "📋", "titulo": "Pincel Ekade Web", "href": "https://www.gobiernodecanarias.org/educacion/9/pekweb/ekade"}, {"id": "pincel-ekade-movil", "icono": "📱", "titulo": "Pincel Ekade Móvil", "href": "https://www.gobiernodecanarias.org/educacion/9/PEKWEB/ekade/movil"}, {"id": "evagd", "icono": "🏫", "titulo": "EVAGD", "href": "https://www3.gobiernodecanarias.org/educacion/cau_ce/cas/login?service=https://www3.gobiernodecanarias.org/medusa/evagd/laspalmas/login/index.php?authCAS=CAS"}, {"id": "campus", "icono": "🖥️", "titulo": "CAMPUS", "href": "https://www3.gobiernodecanarias.org/educacion/cau_ce/cas/login?service=http://www3.gobiernodecanarias.org/medusa/eforma/campus/login/index.php"}, {"id": "blog-de-centro-ies-primero-de-mayo", "icono": "📰", "titulo": "Blog de centro IES Primero de Mayo", "href": "https://www3.gobiernodecanarias.org/medusa/edublog/iesprimerodemayo/"}, {"id": "portal-de-la-consejeria", "icono": "🏛️", "titulo": "Portal de la Consejería", "href": "https://www.gobiernodecanarias.org/educacion/web/"}, {"id": "calendario-escolar-26-27", "icono": "📅", "titulo": "Calendario escolar 26-27", "href": "https://www.gobiernodecanarias.org/educacion/web/centros/calendario_escolar/"}];
+</script>
+
+<script>
+  // ── FAVORITOS: detección PWA instalada + móvil, gestión y render ──
+  (function () {
+    var STORAGE_KEY = 'tic-favoritos';
+
+    var esStandalone = window.matchMedia('(display-mode: standalone)').matches
+      || window.navigator.standalone === true;
+    var esMovil = window.matchMedia('(max-width: 900px)').matches;
+    var modoFavoritos = esStandalone && esMovil;
+
+    if (!modoFavoritos) return;
+    document.body.classList.add('modo-favoritos');
+
+    function leerFavoritos() {
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function guardarFavoritos(lista) {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(lista)); } catch (e) {}
+    }
+
+    function actualizarEstadoBotones() {
+      var favoritos = leerFavoritos();
+      document.querySelectorAll('.btn-favorito').forEach(function (btn) {
+        var id = btn.getAttribute('data-fav-target');
+        var activo = favoritos.indexOf(id) !== -1;
+        btn.setAttribute('aria-pressed', activo ? 'true' : 'false');
+        btn.setAttribute('aria-label', activo ? 'Quitar de accesos rápidos' : 'Marcar como favorito');
+      });
+    }
+
+    function renderFavoritos() {
+      var favoritos = leerFavoritos();
+      var cont = document.getElementById('seccionFavoritos');
+      if (!cont) return;
+      cont.innerHTML = '';
+
+      document.body.classList.toggle('hay-favoritos', favoritos.length > 0);
+      if (favoritos.length === 0) return;
+
+      favoritos.forEach(function (id) {
+        var datos = RECURSOS_FAV.filter(function (r) { return r.id === id; })[0];
+        if (!datos) return; // favorito guardado de una tarjeta que ya no existe
+        var a = document.createElement('a');
+        a.className = 'recurso-card';
+        a.href = datos.href;
+        if (/^https?:\/\//.test(datos.href)) {
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+        }
+        a.innerHTML =
+          '<div class="card-body">' +
+            '<div class="card-icono">' + datos.icono + '</div>' +
+            '<div class="card-titulo">' + datos.titulo + '</div>' +
+          '</div>' +
+          '<div class="card-footer">' +
+            '<span class="card-cta">Abrir <svg viewBox="0 0 448 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.7 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></svg></span>' +
+            '<span class="card-tag">⭐ Acceso rápido</span>' +
+          '</div>';
+        cont.appendChild(a);
+      });
+    }
+
+    window.toggleFavorito = function (btn) {
+      var id = btn.getAttribute('data-fav-target');
+      if (!id) return;
+      var favoritos = leerFavoritos();
+      var idx = favoritos.indexOf(id);
+      if (idx === -1) {
+        favoritos.push(id);
+      } else {
+        favoritos.splice(idx, 1);
+      }
+      guardarFavoritos(favoritos);
+      actualizarEstadoBotones();
+      renderFavoritos();
+    };
+
+    actualizarEstadoBotones();
+    renderFavoritos();
   })();
 </script>
 
