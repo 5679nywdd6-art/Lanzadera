@@ -1547,12 +1547,29 @@
 
 <script>
   // ── Splash Screen ──
+  // Solo se muestra una vez por sesión de la PWA: al abrir la app desde el
+  // icono de inicio. Si el usuario navega internamente (p. ej. "Volver a la
+  // página principal" desde una guía) y vuelve a cargar index.html dentro de
+  // la misma sesión, el splash no debe repetirse.
   (function () {
     var splash = document.getElementById('splash');
     if (!splash) return;
     var esStandalone = window.matchMedia('(display-mode: standalone)').matches
       || window.navigator.standalone === true;
     if (!esStandalone) return;
+
+    var YA_MOSTRADO_KEY = 'tic-splash-mostrado';
+    try {
+      if (sessionStorage.getItem(YA_MOSTRADO_KEY) === '1') {
+        splash.style.display = 'none';
+        return;
+      }
+      sessionStorage.setItem(YA_MOSTRADO_KEY, '1');
+    } catch (e) {
+      // Si sessionStorage no está disponible (modo privado, etc.),
+      // se sigue mostrando el splash como antes, sin bloquear nada.
+    }
+
     requestAnimationFrame(function () {
       requestAnimationFrame(function () {
         splash.classList.add('activo');
