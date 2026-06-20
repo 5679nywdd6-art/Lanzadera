@@ -85,6 +85,39 @@
   }
   .skip-link:focus { left: 0; }
 
+  /* ── INDICADOR DE MODO OFFLINE ── */
+  /* Solo aparece cuando el navegador detecta que no hay conexión.
+     Si se está viendo contenido en ese momento, necesariamente proviene
+     de la caché del Service Worker, no de la red. */
+  #offline-indicador {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -100%);
+    z-index: 950;
+    background: var(--azul);
+    color: var(--blanco);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 8px 18px;
+    border-radius: 0 0 10px 10px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    box-shadow: 0 4px 14px var(--sombra);
+    transition: transform 0.3s ease;
+    pointer-events: none;
+  }
+  #offline-indicador.visible {
+    transform: translate(-50%, 0);
+  }
+  #offline-indicador svg {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+  }
+
   /* ── CONTROLES FLOTANTES ── */
   .controles {
     position: fixed;
@@ -581,6 +614,12 @@
 <body>
 
 <a href="#contenido" class="skip-link">Saltar al contenido</a>
+
+<!-- INDICADOR DE MODO OFFLINE -->
+<div id="offline-indicador" role="status" aria-live="polite">
+  <svg viewBox="0 0 640 512" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 65.9-86.1 79.7-118.4c5.8-13.6 5.8-29 0-42.6c-14.9-34.9-46.3-87.7-93.8-131.1C465.1 51.1 399.1 16 320 16c-68.2 0-125 26-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c8.4-19.3 10.6-41.4 4.8-63.3c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3c0 5.8-.8 11.4-2.2 16.7l-95-74.3zM320 416c-24.9 0-48.3-6.3-68.7-17.4l-43.1 33.9C238.7 452.4 278.3 464 320 464c79.1 0 145.1-35.1 192.6-76.3c47.4-41.1 78.4-92.6 93.4-130.6c.3-.8 .6-1.6 .8-2.4c-21.5-26.1-44.5-46.3-65.2-61.9l-48.9 38.3c-23.4 20.5-50.8 33.4-79.7 38.4z"/></svg>
+  <span>Estás viendo la versión guardada sin conexión</span>
+</div>
 
 <!-- SPLASH SCREEN (visible solo al abrir como app instalada) -->
 <div id="splash" role="status" aria-label="Cargando Portal TIC">
@@ -1531,6 +1570,25 @@
 
     actualizarEstadoBotones();
     renderFavoritos();
+  })();
+</script>
+
+<script>
+  // ── INDICADOR DE MODO OFFLINE ──
+  // Refleja el estado real de conexión del navegador (navigator.onLine,
+  // eventos 'online'/'offline'). Si no hay conexión, cualquier contenido
+  // visible procede necesariamente de la caché del Service Worker.
+  (function () {
+    var indicador = document.getElementById('offline-indicador');
+    if (!indicador) return;
+
+    function actualizarEstado() {
+      indicador.classList.toggle('visible', !navigator.onLine);
+    }
+
+    window.addEventListener('online', actualizarEstado);
+    window.addEventListener('offline', actualizarEstado);
+    actualizarEstado(); // Comprobación inicial al cargar la página
   })();
 </script>
 
