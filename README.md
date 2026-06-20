@@ -1,5 +1,5 @@
-**CENOBIO**
-Recopilación de guías y tutoriales TIC para el profesorado del **IES Primero de Mayo** (Las Palmas de Gran Canaria), elaboradas por la Coordinación TIC del centro para el curso 2026-2027.
+**PORTAL TIC IES PRIMERO DE MAYO**
+Portal para la coordinación de TICs en el IES Primero de Mayo
 
 **URL**
 https://5679nywdd6-art.github.io/Lanzadera/index.html
