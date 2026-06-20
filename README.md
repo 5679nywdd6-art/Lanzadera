@@ -11,5 +11,6 @@ Este sitio funciona como **Progressive Web App**: se puede instalar en el móvil
 
 Elaborado por **Ramón S. Torrente Jiménez**, Coordinador TIC
 Con la colaboración de **Lara Godoy Marrero**
+
 **IES Primero de Mayo**
 Curso 2026-2027
